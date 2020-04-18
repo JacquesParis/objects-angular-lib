@@ -1,0 +1,17 @@
+<lib-editable-input [(ngModel)]="value" [ngModelOptions]="{ standalone: true }">
+  <lib-input-view>
+    <pre [class]="inputClass" class="form-control-plaintext">{{ value }}</pre>
+  </lib-input-view>
+  <lib-input-edit>
+    <textarea
+      [disabled]="disabled"
+      [class]="inputClass"
+      [required]="required"
+      [name]="editionControllerName"
+      class="form-control"
+      [(ngModel)]="value"
+      (ngModelChange)="onChange()"
+      [rows]="rows"
+    ></textarea>
+  </lib-input-edit>
+</lib-editable-input>

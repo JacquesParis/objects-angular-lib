@@ -123,6 +123,86 @@
           }
         }
       }
+    },
+    "objects-angular-client": {
+      "projectType": "library",
+      "root": "projects/objects-angular-client",
+      "sourceRoot": "projects/objects-angular-client/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/objects-angular-client/tsconfig.lib.json",
+            "project": "projects/objects-angular-client/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/objects-angular-client/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/objects-angular-client/src/test.ts",
+            "tsConfig": "projects/objects-angular-client/tsconfig.spec.json",
+            "karmaConfig": "projects/objects-angular-client/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/objects-angular-client/tsconfig.lib.json",
+              "projects/objects-angular-client/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "objects-angular-forms": {
+      "projectType": "library",
+      "root": "projects/objects-angular-forms",
+      "sourceRoot": "projects/objects-angular-forms/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/objects-angular-forms/tsconfig.lib.json",
+            "project": "projects/objects-angular-forms/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/objects-angular-forms/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/objects-angular-forms/src/test.ts",
+            "tsConfig": "projects/objects-angular-forms/tsconfig.spec.json",
+            "karmaConfig": "projects/objects-angular-forms/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/objects-angular-forms/tsconfig.lib.json",
+              "projects/objects-angular-forms/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }},
   "defaultProject": "objects-angular-lib"
 }

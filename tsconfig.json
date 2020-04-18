@@ -14,7 +14,17 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "objects-angular-client": [
+        "dist/objects-angular-client/objects-angular-client",
+        "dist/objects-angular-client"
+      ],
+      "objects-angular-forms": [
+        "dist/objects-angular-forms/objects-angular-forms",
+        "dist/objects-angular-forms"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

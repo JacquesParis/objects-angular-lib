@@ -1,0 +1,22 @@
+<lib-editable-input [(ngModel)]="value" [ngModelOptions]="{ standalone: true }">
+  <lib-input-view
+    ><input
+      [class]="inputClass"
+      type="text"
+      name="view"
+      readonly
+      class="form-control-plaintext"
+      [(ngModel)]="value"
+  /></lib-input-view>
+  <lib-input-edit>
+    <input
+      [disabled]="disabled"
+      [class]="inputClass"
+      [required]="required"
+      type="text"
+      [name]="editionControllerName"
+      class="form-control"
+      [(ngModel)]="value"
+      (ngModelChange)="onChange()"
+  /></lib-input-edit>
+</lib-editable-input>
