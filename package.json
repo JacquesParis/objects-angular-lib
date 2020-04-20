@@ -45,6 +45,10 @@
     "protractor": "~5.4.3",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "~3.8.3"
+    "typescript": "~3.8.3",
+    "z-schema": "^4.2.2",
+    "ngx-schema-form": "^2.5.2",
+    "jexl": "^2.2.2",
+    "lodash": "^4.17.15"
   }
 }

@@ -4,6 +4,10 @@
   "peerDependencies": {
     "@angular/common": "^9.1.1",
     "@angular/core": "^9.1.1",
-    "tslib": "^1.10.0"
+    "tslib": "^1.10.0",
+    "z-schema": "^4.2.2",
+    "ngx-schema-form": "^2.5.2",
+    "jexl": "^2.2.2",
+    "lodash": "^4.17.15"
   }
 }

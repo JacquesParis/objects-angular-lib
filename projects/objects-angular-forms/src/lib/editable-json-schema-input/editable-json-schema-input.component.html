@@ -1,0 +1,20 @@
+<lib-editable-input [(ngModel)]="value" [ngModelOptions]="{ standalone: true }">
+  <lib-input-view
+    ><sf-form
+      [schema]="schemaView"
+      [(model)]="value"
+      name="view"
+      readonly
+      [class]="inputClass"
+    ></sf-form
+  ></lib-input-view>
+  <lib-input-edit
+    ><sf-form
+      [schema]="schema"
+      [(model)]="value"
+      [class]="inputClass"
+      name="edit"
+      (ngModelChange)="onChange()"
+    ></sf-form
+  ></lib-input-edit>
+</lib-editable-input>

@@ -1,0 +1,34 @@
+<div libEditableForm #libEditableForm="EditableFormDirective">
+  <form #f="ngForm">
+    <sf-form
+      [schema]="schemaView"
+      [model]="value"
+      name="view"
+      *ngIf="libEditableForm.isViewMode"
+    ></sf-form
+    ><sf-form
+      [schema]="schema"
+      [(model)]="value"
+      name="edit"
+      *ngIf="libEditableForm.isEditMode"
+    ></sf-form>
+  </form>
+
+  <button
+    class="btn mr-2 mt-2"
+    [class.btn-primary]="libEditableForm.isViewMode"
+    [class.btn-secondary]="libEditableForm.isEditMode"
+    [innerHTML]="libEditableForm.isEditMode ? 'Cancel' : 'Edit'"
+    [disabled]="libEditableForm.hasActionDisabled"
+    (click)="switchMode()"
+  ></button>
+  <button
+    *ngIf="libEditableForm.isEditMode"
+    type="button"
+    [disabled]="f.invalid"
+    class="btn btn-primary mr-2 mt-2"
+    (click)="saveEditMode()"
+  >
+    Save
+  </button>
+</div>
