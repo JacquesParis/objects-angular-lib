@@ -2,15 +2,17 @@
   <form #f="ngForm">
     <sf-form
       [schema]="schemaView"
-      [model]="value"
+      [model]="properties"
       name="view"
       *ngIf="libEditableForm.isViewMode"
     ></sf-form
     ><sf-form
+      #sf
       [schema]="schema"
-      [(model)]="value"
+      [(model)]="editionProperties"
       name="edit"
       *ngIf="libEditableForm.isEditMode"
+      [validators]="validators"
     ></sf-form>
   </form>
 
