@@ -2,6 +2,10 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/objects-angular-forms",
   "lib": {
-    "entryFile": "src/public-api.ts"
+    "entryFile": "src/public-api.ts",
+    "umdModuleIds": {
+      "lodashEs": "lodashEs",
+      "angular6-json-schema-form": "angular6-json-schema-form"
+    }
   }
 }

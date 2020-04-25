@@ -1,20 +1,23 @@
 <div libEditableForm #libEditableForm="EditableFormDirective">
-  <form #f="ngForm">
-    <sf-form
-      [schema]="schemaView"
-      [model]="properties"
-      name="view"
-      *ngIf="libEditableForm.isViewMode"
-    ></sf-form
-    ><sf-form
-      #sf
-      [schema]="schema"
-      [(model)]="editionProperties"
-      name="edit"
-      *ngIf="libEditableForm.isEditMode"
-      [validators]="validators"
-    ></sf-form>
-  </form>
+  <json-schema-form
+    [schema]="schemaView"
+    framework="bootstrap-4"
+    [data]="viewProperties"
+    *ngIf="libEditableForm.isViewMode"
+    [layout]="layoutView"
+  >
+  </json-schema-form>
+  <json-schema-form
+    #f
+    [schema]="schemaEdit"
+    framework="bootstrap-4"
+    (onSubmit)="onSubmit($event)"
+    (onChanges)="onChange($event)"
+    [data]="editionProperties"
+    *ngIf="libEditableForm.isEditMode"
+    [layout]="layoutEdit"
+  >
+  </json-schema-form>
 
   <button
     class="btn mr-2 mt-2"
@@ -27,9 +30,9 @@
   <button
     *ngIf="libEditableForm.isEditMode"
     type="button"
-    [disabled]="f.invalid"
     class="btn btn-primary mr-2 mt-2"
     (click)="saveEditMode()"
+    [disabled]="!isValid"
   >
     Save
   </button>

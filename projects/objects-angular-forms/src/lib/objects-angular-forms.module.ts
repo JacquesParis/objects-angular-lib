@@ -9,9 +9,7 @@ import { CommonModule } from '@angular/common';
 import { EditableTextComponent } from './editable-text/editable-text.component';
 import { EditableTextareaComponent } from './editable-textarea/editable-textarea.component';
 import { EditableJsonSchemaFormComponent } from './editable-json-schema-form/editable-json-schema-form.component';
-import { EditableJsonSchemaInputComponent } from './editable-json-schema-input/editable-json-schema-input.component';
-import { SchemaFormModule } from 'ngx-schema-form';
-
+import { Bootstrap4FrameworkModule } from 'angular6-json-schema-form';
 @NgModule({
   declarations: [
     EditableInputComponent,
@@ -20,9 +18,13 @@ import { SchemaFormModule } from 'ngx-schema-form';
     EditableTextComponent,
     EditableTextareaComponent,
     EditableJsonSchemaFormComponent,
-    EditableJsonSchemaInputComponent,
   ],
-  imports: [BrowserModule, CommonModule, FormsModule, SchemaFormModule],
+  imports: [
+    BrowserModule,
+    CommonModule,
+    FormsModule,
+    Bootstrap4FrameworkModule,
+  ],
   exports: [
     EditableInputComponent,
     EditableFormDirective,
@@ -30,7 +32,6 @@ import { SchemaFormModule } from 'ngx-schema-form';
     EditableTextComponent,
     EditableTextareaComponent,
     EditableJsonSchemaFormComponent,
-    EditableJsonSchemaInputComponent,
   ],
 })
 export class ObjectsAngularFormsModule {
