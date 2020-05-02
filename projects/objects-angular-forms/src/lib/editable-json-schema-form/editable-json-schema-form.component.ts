@@ -5,6 +5,7 @@ import {
   ViewChild,
   ViewChildren,
   AfterViewInit,
+  Output,
 } from '@angular/core';
 import {
   FormGroup,
@@ -19,10 +20,12 @@ import {
 } from '../editable-abstract/i-json-schema';
 import { EditableFormDirective } from '../editable-form.directive';
 import * as _ from 'lodash-es';
-import { QueryList } from '@angular/core';
+import { QueryList, EventEmitter, OnDestroy } from '@angular/core';
 import { JsonSchemaFormComponent } from 'angular6-json-schema-form';
 import { JsonSchemaCustomType } from '../editable-abstract/i-json-schema';
 import { ValidationErrors } from '@angular/forms';
+import { EditableFormService } from '../editable-form.service';
+import { Subscription } from 'rxjs';
 
 interface CustomInputProperty {
   type: string;
@@ -81,14 +84,18 @@ const CUSTOM_INPUT_PROPERTY: {
   templateUrl: './editable-json-schema-form.component.html',
   styleUrls: ['./editable-json-schema-form.component.scss'],
 })
-export class EditableJsonSchemaFormComponent implements OnInit, AfterViewInit {
+export class EditableJsonSchemaFormComponent
+  implements OnInit, OnDestroy, AfterViewInit {
   @Input() schema: IJsonSchema;
   @Input() public layout: IJsonLayoutPorperty[] = [];
-  @Input() properties: {
+  @Input() entity: {
     [key: string]: any;
     editionProperties: any;
+    isNewEntity: boolean;
   };
   @Input() saveValue: (value) => Promise<void>;
+  @Input() deleteValue: () => Promise<void>;
+  @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   // @Output() validationErrors:EventEmitter<(value)=>any>
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
   @ViewChildren('f') formQuery: QueryList<JsonSchemaFormComponent>;
@@ -103,13 +110,26 @@ export class EditableJsonSchemaFormComponent implements OnInit, AfterViewInit {
       after: (value: any) => any;
     };
   } = {};
+  public isInCreation = false;
+  isValid: any;
+  onCancelSubscription: Subscription;
   get viewProperties() {
     return this.editionPropertiesCompleted;
   }
+
   public layoutEdit: IJsonLayout;
   public layoutView: IJsonLayout;
-  constructor() {}
+  constructor(protected editableFormService: EditableFormService) {}
+  ngOnDestroy(): void {
+    if (!!this.onCancelSubscription) {
+      this.onCancelSubscription.unsubscribe();
+      this.onCancelSubscription = undefined;
+    }
+  }
   ngOnInit(): void {
+    if (this.entity.isNewEntity) {
+      this.isInCreation = this.entity.isNewEntity;
+    }
     this.schemaView = _.cloneDeep(this.schema);
     this.schemaEdit = _.cloneDeep(this.schema);
     this.validators = {};
@@ -152,9 +172,13 @@ export class EditableJsonSchemaFormComponent implements OnInit, AfterViewInit {
       this.schemaView.properties[key].readonly = true;
     }
     this.editionProperties = this.editionPropertiesCompleted;
+    this.changedValue = this.editionPropertiesCompleted;
   }
 
   protected addCustomInput(key: string, inputLayoutPorperty) {
+    if (!inputLayoutPorperty[key]) {
+      inputLayoutPorperty[key] = { key };
+    }
     const type =
       this.schema.properties[key].type +
       '-' +
@@ -167,9 +191,6 @@ export class EditableJsonSchemaFormComponent implements OnInit, AfterViewInit {
         CUSTOM_INPUT_PROPERTY[type]['x-schema-form-type'];
       this.schemaEdit.properties[key]['x-schema-form'].type =
         CUSTOM_INPUT_PROPERTY[type]['x-schema-form-type'];
-      if (!inputLayoutPorperty[key]) {
-        inputLayoutPorperty[key] = { key };
-      }
       if (CUSTOM_INPUT_PROPERTY[type].validator) {
         inputLayoutPorperty[key].validator = inputLayoutPorperty[key].validator
           ? Validators.compose([
@@ -201,6 +222,9 @@ export class EditableJsonSchemaFormComponent implements OnInit, AfterViewInit {
         this.propertyAdapters[key] = CUSTOM_INPUT_PROPERTY[type].adapters;
       }
     }
+    if (!inputLayoutPorperty[key].destroyStrategy) {
+      inputLayoutPorperty[key].destroyStrategy = 'empty';
+    }
   }
 
   ngAfterViewInit(): void {
@@ -229,20 +253,16 @@ export class EditableJsonSchemaFormComponent implements OnInit, AfterViewInit {
         }
       });
     }
-  }
 
-  yourIsValidFn(value) {
-    console.log('yourIsValidFn', value);
-  }
-  yourValidationErrorsFn(value) {
-    console.log('yourValidationErrorsFn', value);
-  }
-  descriptionStringVal(form, value) {
-    console.log(form, value);
+    this.onCancelSubscription = this.libEditableForm.cancelObservable.subscribe(
+      () => {
+        this.onCancel.emit();
+      }
+    );
   }
 
   get editionPropertiesCompleted(): any {
-    const editionProperties = this.properties.editionProperties;
+    const editionProperties = this.entity.editionProperties;
     Object.keys(this.propertyAdapters).forEach((key) => {
       editionProperties[key] = this.propertyAdapters[key].before(
         editionProperties[key]
@@ -272,14 +292,22 @@ export class EditableJsonSchemaFormComponent implements OnInit, AfterViewInit {
     if (this.saveValue) {
       this.saveValue(this.changedValue).then(() => {
         this.libEditableForm.saveEditMode();
+        this.isInCreation = this.entity.isNewEntity;
       });
     } else {
-      this.properties.editionProperties = this.changedValue;
+      this.entity.editionProperties = this.changedValue;
+      this.isInCreation = this.entity.isNewEntity;
     }
   }
+  delete() {
+    this.deleteValue().then(() => {
+      this.entity = null;
+    });
+  }
 
-  get isValid() {
+  get _isValid() {
     if (
+      this.formQuery &&
       this.formQuery.first &&
       this.formQuery.first.jsf &&
       this.formQuery.first.jsf.formGroup
@@ -294,19 +322,27 @@ export class EditableJsonSchemaFormComponent implements OnInit, AfterViewInit {
         }
       );
     } else {
-      return true;
+      return false;
     }
   }
 
   public onChange(properties) {
-    /*this.editionProperties = properties;*/
-    this.changedValue = properties;
-    console.log(properties, this.formQuery);
     /*
-    console.log(properties, this.form);
-    (this.form.first.jsf.formGroup as FormGroup).controls[
-      'definitionString'
-    ].setErrors({ 'non-json': true });*/
+    Object.keys(this.schemaEdit.properties).forEach((key) => {
+      if (!(key in properties)) {
+        let value =
+          'default' in this.schemaEdit.properties[key]
+            ? this.schemaEdit.properties[key].default
+            : null;
+        if (key in this.propertyAdapters) {
+          value = this.propertyAdapters[key].before(value);
+        }
+        properties[key] = value;
+      }
+    });*/
+
+    this.changedValue = properties;
+    this.isValid = this._isValid;
   }
   public onSubmit(properties) {
     this.onChange(properties);

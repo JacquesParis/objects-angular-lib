@@ -7,7 +7,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "forms": "ng build objects-angular-forms",
+    "watch-forms": "ng build objects-angular-forms --watch"
   },
   "private": true,
   "dependencies": {

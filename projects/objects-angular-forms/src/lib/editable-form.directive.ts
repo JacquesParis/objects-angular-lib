@@ -1,21 +1,20 @@
-import { Directive, OnInit, OnDestroy } from '@angular/core';
+import { Directive, OnInit, OnDestroy, Input } from '@angular/core';
 import { EditableFormService } from './editable-form.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 @Directive({
   // tslint:disable-next-line: directive-selector
   selector: '[libEditableForm]',
   exportAs: 'EditableFormDirective',
 })
 export class EditableFormDirective implements OnInit, OnDestroy {
+  @Input() initialEditMode = false;
   // tslint:disable-next-line: variable-name
   protected _editModeSubject: BehaviorSubject<boolean> = new BehaviorSubject<
     boolean
   >(false);
   // tslint:disable-next-line: variable-name
-  protected _cancelSubject: BehaviorSubject<number> = new BehaviorSubject<
-    number
-  >(0);
-  protected id: string;
+  protected _cancelSubject: Subject<void> = new Subject<void>();
+  public id: string;
   constructor(protected editableFormService: EditableFormService) {
     this.id = '' + Math.ceil(Math.random() * 10000000000000000000000000000);
   }
@@ -25,6 +24,11 @@ export class EditableFormDirective implements OnInit, OnDestroy {
     } else {
       this.editableFormService.unregisterFormInEdition(this.id);
     }
+    if (this.initialEditMode) {
+      window.setTimeout(() => {
+        this.enterEditMode();
+      });
+    }
   }
   ngOnDestroy(): void {
     this.editableFormService.unregisterFormInEdition(this.id);
@@ -33,7 +37,7 @@ export class EditableFormDirective implements OnInit, OnDestroy {
   get editModeObservable(): Observable<boolean> {
     return this._editModeSubject.asObservable();
   }
-  get cancelObservable(): Observable<number> {
+  get cancelObservable(): Observable<void> {
     return this._cancelSubject.asObservable();
   }
 
@@ -58,7 +62,7 @@ export class EditableFormDirective implements OnInit, OnDestroy {
   }
 
   public cancelEditMode() {
-    this._cancelSubject.next(this._cancelSubject.value + 1);
+    this._cancelSubject.next();
     this._editModeSubject.next(false);
     this.editableFormService.unregisterFormInEdition(this.id);
   }

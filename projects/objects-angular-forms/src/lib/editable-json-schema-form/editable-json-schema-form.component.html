@@ -1,4 +1,9 @@
-<div libEditableForm #libEditableForm="EditableFormDirective">
+<div
+  *ngIf="entity"
+  libEditableForm
+  [initialEditMode]="isInCreation"
+  #libEditableForm="EditableFormDirective"
+>
   <json-schema-form
     [schema]="schemaView"
     framework="bootstrap-4"
@@ -24,7 +29,7 @@
     [class.btn-primary]="libEditableForm.isViewMode"
     [class.btn-secondary]="libEditableForm.isEditMode"
     [innerHTML]="libEditableForm.isEditMode ? 'Cancel' : 'Edit'"
-    [disabled]="libEditableForm.hasActionDisabled"
+    [disabled]="!isInCreation && libEditableForm.hasActionDisabled"
     (click)="switchMode()"
   ></button>
   <button
@@ -33,6 +38,16 @@
     class="btn btn-primary mr-2 mt-2"
     (click)="saveEditMode()"
     [disabled]="!isValid"
+    [innerHTML]="isInCreation ? 'Create' : 'Save'"
+  >
+    Save
+  </button>
+  <button
+    *ngIf="libEditableForm.isViewMode && deleteValue"
+    type="button"
+    class="btn mr-2 mt-2"
+    (click)="delete()"
+    [innerHTML]="'Delete'"
   >
     Save
   </button>
