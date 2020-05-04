@@ -19,12 +19,7 @@ import { Bootstrap4FrameworkModule } from 'angular6-json-schema-form';
     EditableTextareaComponent,
     EditableJsonSchemaFormComponent,
   ],
-  imports: [
-    BrowserModule,
-    CommonModule,
-    FormsModule,
-    Bootstrap4FrameworkModule,
-  ],
+  imports: [CommonModule, FormsModule, Bootstrap4FrameworkModule],
   exports: [
     EditableInputComponent,
     EditableFormDirective,
