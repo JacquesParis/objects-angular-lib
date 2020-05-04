@@ -4,7 +4,7 @@ export interface IJsonSchema {
   [otherKey: string]: any;
 }
 
-export interface IJsonLayoutPorperty {
+export interface IJsonLayoutProperty {
   type?: string;
   title?: string;
   htmlClass?: string;
@@ -27,7 +27,7 @@ export interface IJsonLayoutPorperty {
   validator?: ValidatorFn;
 }
 
-export type IJsonLayout = (string | IJsonLayoutPorperty)[];
+export type IJsonLayout = (string | IJsonLayoutProperty)[];
 
 export enum JsonSchemaCustomType {
   'string-json' = 'string-json',

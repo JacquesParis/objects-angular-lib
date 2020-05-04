@@ -16,7 +16,7 @@ import {
 import {
   IJsonSchema,
   IJsonLayout,
-  IJsonLayoutPorperty,
+  IJsonLayoutProperty,
 } from '../editable-abstract/i-json-schema';
 import { EditableFormDirective } from '../editable-form.directive';
 import * as _ from 'lodash-es';
@@ -87,7 +87,7 @@ const CUSTOM_INPUT_PROPERTY: {
 export class EditableJsonSchemaFormComponent
   implements OnInit, OnDestroy, AfterViewInit {
   @Input() schema: IJsonSchema;
-  @Input() public layout: IJsonLayoutPorperty[] = [];
+  @Input() public layout: IJsonLayoutProperty[] = [];
   @Input() entity: {
     [key: string]: any;
     editionProperties: any;
@@ -95,6 +95,7 @@ export class EditableJsonSchemaFormComponent
   };
   @Input() saveValue: (value) => Promise<void>;
   @Input() deleteValue: () => Promise<void>;
+  // tslint:disable-next-line: no-output-on-prefix
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   // @Output() validationErrors:EventEmitter<(value)=>any>
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
@@ -102,6 +103,7 @@ export class EditableJsonSchemaFormComponent
   public schemaView: IJsonSchema;
   public editionProperties: any;
   public schemaEdit: IJsonSchema;
+  // tslint:disable-next-line: variable-name
   protected _changedValue: any;
   protected validators: { [key: string]: ValidatorFn };
   protected propertyAdapters: {
@@ -135,21 +137,21 @@ export class EditableJsonSchemaFormComponent
     this.validators = {};
 
     type JsonLayoutProperties = {
-      [key: string]: IJsonLayoutPorperty;
+      [key: string]: IJsonLayoutProperty;
     };
 
-    const inputLayoutPorperty: JsonLayoutProperties = {};
+    const inputLayoutProperty: JsonLayoutProperties = {};
     this.layout.forEach((property) => {
-      inputLayoutPorperty[property.key] = property;
+      inputLayoutProperty[property.key] = property;
       if (property.validator) {
         this.validators[property.key] = property.validator;
       }
     });
     this.layoutEdit = [];
     Object.keys(this.schema.properties).forEach((key) => {
-      this.addCustomInput(key, inputLayoutPorperty);
-      if (key in inputLayoutPorperty) {
-        this.layoutEdit.push(inputLayoutPorperty[key]);
+      this.addCustomInput(key, inputLayoutProperty);
+      if (key in inputLayoutProperty) {
+        this.layoutEdit.push(inputLayoutProperty[key]);
       } else {
         this.layoutEdit.push(key);
       }
@@ -175,9 +177,9 @@ export class EditableJsonSchemaFormComponent
     this.changedValue = this.editionPropertiesCompleted;
   }
 
-  protected addCustomInput(key: string, inputLayoutPorperty) {
-    if (!inputLayoutPorperty[key]) {
-      inputLayoutPorperty[key] = { key };
+  protected addCustomInput(key: string, inputLayoutProperty) {
+    if (!inputLayoutProperty[key]) {
+      inputLayoutProperty[key] = { key };
     }
     const type =
       this.schema.properties[key].type +
@@ -192,27 +194,27 @@ export class EditableJsonSchemaFormComponent
       this.schemaEdit.properties[key]['x-schema-form'].type =
         CUSTOM_INPUT_PROPERTY[type]['x-schema-form-type'];
       if (CUSTOM_INPUT_PROPERTY[type].validator) {
-        inputLayoutPorperty[key].validator = inputLayoutPorperty[key].validator
+        inputLayoutProperty[key].validator = inputLayoutProperty[key].validator
           ? Validators.compose([
-              inputLayoutPorperty[key].validator,
+              inputLayoutProperty[key].validator,
               CUSTOM_INPUT_PROPERTY[type].validator,
             ])
           : CUSTOM_INPUT_PROPERTY[type].validator;
-        this.validators[key] = inputLayoutPorperty[key].validator;
+        this.validators[key] = inputLayoutProperty[key].validator;
       }
       if (CUSTOM_INPUT_PROPERTY[type].fieldHtmlClass) {
-        inputLayoutPorperty[key].fieldHtmlClass =
+        inputLayoutProperty[key].fieldHtmlClass =
           CUSTOM_INPUT_PROPERTY[type].fieldHtmlClass +
-          (inputLayoutPorperty[key].fieldHtmlClass
-            ? ' ' + inputLayoutPorperty[key].fieldHtmlClass
+          (inputLayoutProperty[key].fieldHtmlClass
+            ? ' ' + inputLayoutProperty[key].fieldHtmlClass
             : '');
       }
       if (CUSTOM_INPUT_PROPERTY[type].validationMessages) {
-        inputLayoutPorperty[key].validationMessages = inputLayoutPorperty[key]
+        inputLayoutProperty[key].validationMessages = inputLayoutProperty[key]
           .validationMessages
           ? _.merge(
               {},
-              inputLayoutPorperty[key].validationMessages,
+              inputLayoutProperty[key].validationMessages,
               CUSTOM_INPUT_PROPERTY[type].validationMessages
             )
           : CUSTOM_INPUT_PROPERTY[type].validationMessages;
@@ -222,8 +224,8 @@ export class EditableJsonSchemaFormComponent
         this.propertyAdapters[key] = CUSTOM_INPUT_PROPERTY[type].adapters;
       }
     }
-    if (!inputLayoutPorperty[key].destroyStrategy) {
-      inputLayoutPorperty[key].destroyStrategy = 'empty';
+    if (!inputLayoutProperty[key].destroyStrategy) {
+      inputLayoutProperty[key].destroyStrategy = 'empty';
     }
   }
 
