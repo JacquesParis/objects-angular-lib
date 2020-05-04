@@ -327,8 +327,16 @@ export class EditableJsonSchemaFormComponent
   }
 
   public onChange(properties) {
-    /*
     Object.keys(this.schemaEdit.properties).forEach((key) => {
+      if (
+        'oneOf' in this.schemaEdit.properties[key] &&
+        'null' === properties[key] &&
+        !_.find(this.schemaEdit.properties[key].oneOf, (oneOf) => {
+          return oneOf.enum && 'null' === oneOf.enum[0];
+        })
+      ) {
+        delete properties[key];
+      }
       if (!(key in properties)) {
         let value =
           'default' in this.schemaEdit.properties[key]
@@ -339,7 +347,7 @@ export class EditableJsonSchemaFormComponent
         }
         properties[key] = value;
       }
-    });*/
+    });
 
     this.changedValue = properties;
     this.isValid = this._isValid;
