@@ -4,7 +4,11 @@
   [initialEditMode]="isInCreation"
   #libEditableForm="EditableFormDirective"
 >
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
   <json-schema-form
+    #viewFormQuery
     [schema]="schemaView"
     framework="bootstrap-4"
     [data]="viewProperties"
@@ -13,7 +17,7 @@
   >
   </json-schema-form>
   <json-schema-form
-    #f
+    #editionFormQuery
     [schema]="schemaEdit"
     framework="bootstrap-4"
     (onSubmit)="onSubmit($event)"
@@ -46,9 +50,25 @@
     *ngIf="libEditableForm.isViewMode && deleteValue"
     type="button"
     class="btn mr-2 mt-2"
-    (click)="delete()"
+    (click)="openModal(confirmDelete)"
     [innerHTML]="'Delete'"
+    [disabled]="libEditableForm.hasActionDisabled"
   >
     Save
   </button>
 </div>
+<ng-template #confirmDelete>
+  <div class="modal-body text-center">
+    <p>Do you want to confirm?</p>
+    <button type="button" class="btn btn-primary" (click)="delete()">
+      Yes
+    </button>
+    <button
+      type="button"
+      class="btn btn-default mr-2"
+      (click)="modalRef.hide()"
+    >
+      No
+    </button>
+  </div>
+</ng-template>

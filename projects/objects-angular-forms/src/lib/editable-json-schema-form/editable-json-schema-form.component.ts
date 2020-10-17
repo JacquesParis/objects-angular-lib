@@ -6,6 +6,9 @@ import {
   ViewChildren,
   AfterViewInit,
   Output,
+  ElementRef,
+  ContentChildren,
+  TemplateRef,
 } from '@angular/core';
 import {
   FormGroup,
@@ -26,6 +29,7 @@ import { JsonSchemaCustomType } from '../editable-abstract/i-json-schema';
 import { ValidationErrors } from '@angular/forms';
 import { EditableFormService } from '../editable-form.service';
 import { Subscription } from 'rxjs';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 interface CustomInputProperty {
   type: string;
@@ -97,9 +101,14 @@ export class EditableJsonSchemaFormComponent
   @Input() deleteValue: () => Promise<void>;
   // tslint:disable-next-line: no-output-on-prefix
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
-  // @Output() validationErrors:EventEmitter<(value)=>any>
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
-  @ViewChildren('f') formQuery: QueryList<JsonSchemaFormComponent>;
+  @ViewChildren('editionFormQuery') editionFormQuery: QueryList<
+    JsonSchemaFormComponent
+  >;
+
+  @ViewChildren('viewFormQuery', { read: ElementRef }) viewFormQuery: QueryList<
+    ElementRef
+  >;
   public schemaView: IJsonSchema;
   public editionProperties: any;
   public schemaEdit: IJsonSchema;
@@ -114,19 +123,24 @@ export class EditableJsonSchemaFormComponent
   } = {};
   public isInCreation = false;
   isValid: any;
-  onCancelSubscription: Subscription;
+  subscriptions: Subscription[] = [];
   get viewProperties() {
     return this.editionPropertiesCompleted;
   }
 
   public layoutEdit: IJsonLayout;
   public layoutView: IJsonLayout;
-  constructor(protected editableFormService: EditableFormService) {}
+  public error: string;
+  public modalRef: BsModalRef;
+  constructor(
+    protected editableFormService: EditableFormService,
+    protected modalService: BsModalService
+  ) {}
   ngOnDestroy(): void {
-    if (!!this.onCancelSubscription) {
-      this.onCancelSubscription.unsubscribe();
-      this.onCancelSubscription = undefined;
-    }
+    this.subscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
+    this.subscriptions = [];
   }
   ngOnInit(): void {
     if (this.entity.isNewEntity) {
@@ -172,9 +186,22 @@ export class EditableJsonSchemaFormComponent
 
     for (const key of Object.keys(this.schemaView.properties)) {
       this.schemaView.properties[key].readonly = true;
+      this.schemaView.properties[key].readOnly = true;
+      this.schemaView.properties[key].disabled = true;
     }
+    this.layoutView.forEach((property) => {
+      if (_.isObject(property) && 'key' in (property as any)) {
+        (property as any).readonly = true;
+        (property as any).disabled = true;
+      }
+    });
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
+  }
+
+  public openModal(template: TemplateRef<any>) {
+    this.error = '';
+    this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
   }
 
   protected addCustomInput(key: string, inputLayoutProperty) {
@@ -224,43 +251,63 @@ export class EditableJsonSchemaFormComponent
         this.propertyAdapters[key] = CUSTOM_INPUT_PROPERTY[type].adapters;
       }
     }
-    if (!inputLayoutProperty[key].destroyStrategy) {
-      inputLayoutProperty[key].destroyStrategy = 'empty';
-    }
   }
 
   ngAfterViewInit(): void {
     if (0 < Object.keys(this.validators).length) {
-      this.formQuery.changes.subscribe(() => {
-        if (
-          this.formQuery.first &&
-          this.formQuery.first.jsf &&
-          this.formQuery.first.jsf.formGroup
-        ) {
-          const formGroup: FormGroup = this.formQuery.first.jsf
-            .formGroup as FormGroup;
-          const formControls: { [key: string]: AbstractControl } = (this
-            .formQuery.first.jsf.formGroup as FormGroup).controls;
-          Object.keys(this.validators).forEach((key) => {
-            const formControl = formControls[key];
-            if (formControl.validator) {
-              formControl.validator = Validators.compose([
-                formControl.validator,
-                this.validators[key],
-              ]);
-            } else {
-              formControl.validator = this.validators[key];
-            }
-          });
+      this.subscriptions.push(
+        this.editionFormQuery.changes.subscribe(() => {
+          this.addValidators();
+        })
+      );
+      this.addValidators();
+    }
+
+    this.subscriptions.push(
+      this.viewFormQuery.changes.subscribe(() => {
+        this.forceReadOnlyView();
+      })
+    );
+    this.forceReadOnlyView();
+
+    this.subscriptions.push(
+      this.libEditableForm.cancelObservable.subscribe(() => {
+        this.onCancel.emit();
+      })
+    );
+  }
+
+  protected addValidators() {
+    if (
+      this.editionFormQuery.first &&
+      this.editionFormQuery.first.jsf &&
+      this.editionFormQuery.first.jsf.formGroup
+    ) {
+      const formGroup: FormGroup = this.editionFormQuery.first.jsf
+        .formGroup as FormGroup;
+      const formControls: { [key: string]: AbstractControl } = (this
+        .editionFormQuery.first.jsf.formGroup as FormGroup).controls;
+      Object.keys(this.validators).forEach((key) => {
+        const formControl = formControls[key];
+        if (formControl.validator) {
+          formControl.validator = Validators.compose([
+            formControl.validator,
+            this.validators[key],
+          ]);
+        } else {
+          formControl.validator = this.validators[key];
         }
       });
     }
-
-    this.onCancelSubscription = this.libEditableForm.cancelObservable.subscribe(
-      () => {
-        this.onCancel.emit();
-      }
-    );
+  }
+  protected forceReadOnlyView() {
+    if (this.viewFormQuery.first) {
+      this.viewFormQuery.first.nativeElement
+        .querySelectorAll('input')
+        .forEach((input) => {
+          input.disabled = true;
+        });
+    }
   }
 
   get editionPropertiesCompleted(): any {
@@ -285,36 +332,46 @@ export class EditableJsonSchemaFormComponent
   }
 
   switchMode() {
+    this.error = '';
     if (this.libEditableForm.isViewMode) {
       this.editionProperties = this.editionPropertiesCompleted;
     }
     this.libEditableForm.switchMode();
   }
-  saveEditMode() {
-    if (this.saveValue) {
-      this.saveValue(this.changedValue).then(() => {
+  async saveEditMode() {
+    this.error = '';
+    try {
+      if (this.saveValue) {
+        await this.saveValue(this.changedValue);
         this.libEditableForm.saveEditMode();
         this.isInCreation = this.entity.isNewEntity;
-      });
-    } else {
-      this.entity.editionProperties = this.changedValue;
-      this.isInCreation = this.entity.isNewEntity;
+      } else {
+        this.entity.editionProperties = this.changedValue;
+        this.isInCreation = this.entity.isNewEntity;
+      }
+    } catch (error) {
+      this.error = error.message ? error.message : 'Unexpected error';
     }
   }
-  delete() {
-    this.deleteValue().then(() => {
+  async delete() {
+    this.error = '';
+    this.modalRef.hide();
+    try {
+      await this.deleteValue();
       this.entity = null;
-    });
+    } catch (error) {
+      this.error = error.message ? error.message : 'Unexpected error';
+    }
   }
 
   get _isValid() {
     if (
-      this.formQuery &&
-      this.formQuery.first &&
-      this.formQuery.first.jsf &&
-      this.formQuery.first.jsf.formGroup
+      this.editionFormQuery &&
+      this.editionFormQuery.first &&
+      this.editionFormQuery.first.jsf &&
+      this.editionFormQuery.first.jsf.formGroup
     ) {
-      const formGroup: FormGroup = this.formQuery.first.jsf
+      const formGroup: FormGroup = this.editionFormQuery.first.jsf
         .formGroup as FormGroup;
 
       return _.every(
