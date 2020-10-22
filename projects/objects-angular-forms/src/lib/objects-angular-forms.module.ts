@@ -1,5 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EditableFormDirective } from './editable-form.directive';
 import { EditableInputComponent } from './editable-input/editable-input.component';
 import { EditableInputContentDirective } from './editable-input/editable-input-content.directive';
@@ -8,6 +8,8 @@ import { EditableTextComponent } from './editable-text/editable-text.component';
 import { EditableTextareaComponent } from './editable-textarea/editable-textarea.component';
 import { EditableJsonSchemaFormComponent } from './editable-json-schema-form/editable-json-schema-form.component';
 import { Bootstrap4FrameworkModule } from 'angular6-json-schema-form';
+import { EditableFileComponent } from './editable-file/editable-file.component';
+import { WidgetFileComponent } from './widget-file/widget-file.component';
 
 @NgModule({
   declarations: [
@@ -17,8 +19,15 @@ import { Bootstrap4FrameworkModule } from 'angular6-json-schema-form';
     EditableTextComponent,
     EditableTextareaComponent,
     EditableJsonSchemaFormComponent,
+    EditableFileComponent,
+    WidgetFileComponent,
   ],
-  imports: [CommonModule, FormsModule, Bootstrap4FrameworkModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    Bootstrap4FrameworkModule,
+    ReactiveFormsModule,
+  ],
   exports: [
     EditableInputComponent,
     EditableFormDirective,
@@ -26,6 +35,10 @@ import { Bootstrap4FrameworkModule } from 'angular6-json-schema-form';
     EditableTextComponent,
     EditableTextareaComponent,
     EditableJsonSchemaFormComponent,
+    EditableFileComponent,
+    WidgetFileComponent,
   ],
 })
-export class ObjectsAngularFormsModule {}
+export class ObjectsAngularFormsModule {
+  construtor() {}
+}

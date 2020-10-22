@@ -325,6 +325,7 @@ export class EditableJsonSchemaFormComponent
     Object.keys(this.propertyAdapters).forEach((key) => {
       changedValue[key] = this.propertyAdapters[key].after(changedValue[key]);
     });
+    this.editableFormService.updateWidgetValues(changedValue);
     return changedValue;
   }
   protected set changedValue(value: any) {

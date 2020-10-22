@@ -1,0 +1,34 @@
+<div [class]="options?.htmlClass || ''">
+  <label
+    *ngIf="options?.title"
+    [attr.for]="'control' + layoutNode?._id"
+    [class]="options?.labelHtmlClass || ''"
+    [style.display]="options?.notitle ? 'none' : ''"
+    [innerHTML]="options?.title"
+  ></label>
+  <input
+    [attr.aria-describedby]="'control' + layoutNode?._id + 'Status'"
+    [attr.list]="'control' + layoutNode?._id + 'Autocomplete'"
+    [attr.maxlength]="options?.maxLength"
+    [attr.minlength]="options?.minLength"
+    [attr.pattern]="options?.pattern"
+    [attr.placeholder]="options?.placeholder"
+    [attr.required]="options?.required"
+    [class]="'form-control-file'"
+    [disabled]="controlDisabled"
+    [id]="'control' + layoutNode?._id"
+    [name]="controlName"
+    [readonly]="options?.readonly ? 'readonly' : null"
+    [type]="layoutNode?.type"
+    (change)="handleFileInput($event.target.files)"
+  />
+  <datalist
+    *ngIf="options?.typeahead?.source"
+    [id]="'control' + layoutNode?._id + 'Autocomplete'"
+  >
+    <option
+      *ngFor="let word of options?.typeahead?.source"
+      [value]="word"
+    ></option>
+  </datalist>
+</div>
