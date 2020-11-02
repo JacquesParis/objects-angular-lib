@@ -10,6 +10,7 @@ import { EditableJsonSchemaFormComponent } from './editable-json-schema-form/edi
 import { Bootstrap4FrameworkModule } from 'angular6-json-schema-form';
 import { EditableFileComponent } from './editable-file/editable-file.component';
 import { WidgetFileComponent } from './widget-file/widget-file.component';
+import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { WidgetFileComponent } from './widget-file/widget-file.component';
     FormsModule,
     Bootstrap4FrameworkModule,
     ReactiveFormsModule,
+    NgxBootstrapIconsModule,
   ],
   exports: [
     EditableInputComponent,

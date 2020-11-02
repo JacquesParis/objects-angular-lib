@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 export interface IJsonSchema {
-  properties: { [name: string]: any };
+  properties?: { [name: string]: any };
   [otherKey: string]: any;
 }
 
@@ -30,6 +30,8 @@ export interface IJsonLayoutProperty {
 export type IJsonLayout = (string | IJsonLayoutProperty)[];
 
 export enum JsonSchemaCustomType {
-  'string-json' = 'string-json',
-  'object-json' = 'object-json',
+  string_json = 'string_json',
+  object_json = 'object_json',
+  file = 'file_undefined',
+  textarea_undefined = 'textarea_undefined',
 }

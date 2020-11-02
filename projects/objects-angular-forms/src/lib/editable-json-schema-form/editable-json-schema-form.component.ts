@@ -1,3 +1,5 @@
+import { JSON_FILE_PROPERTY } from './../widget-file/widget-file.constant';
+import { CustomInputProperty } from './editable-json-schema-form.constant';
 import {
   Component,
   OnInit,
@@ -7,8 +9,8 @@ import {
   AfterViewInit,
   Output,
   ElementRef,
-  ContentChildren,
   TemplateRef,
+  OnChanges,
 } from '@angular/core';
 import {
   FormGroup,
@@ -31,18 +33,6 @@ import { EditableFormService } from '../editable-form.service';
 import { Subscription } from 'rxjs';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
-interface CustomInputProperty {
-  type: string;
-  'x-schema-form-type': string;
-  validator?: ValidatorFn;
-  fieldHtmlClass?: string;
-  validationMessages?: { [error: string]: string };
-  adapters?: {
-    before: (value: any) => any;
-    after: (value: any) => any;
-  };
-}
-
 const JSON_INPUT_PROPERTY: CustomInputProperty = {
   type: 'string',
   'x-schema-form-type': 'textarea',
@@ -63,8 +53,8 @@ const JSON_INPUT_PROPERTY: CustomInputProperty = {
 const CUSTOM_INPUT_PROPERTY: {
   [type in JsonSchemaCustomType]: CustomInputProperty;
 } = {
-  'string-json': JSON_INPUT_PROPERTY,
-  'object-json': _.merge({}, JSON_INPUT_PROPERTY, {
+  string_json: JSON_INPUT_PROPERTY,
+  object_json: _.merge({}, JSON_INPUT_PROPERTY, {
     adapters: {
       before: (value) => {
         try {
@@ -80,6 +70,12 @@ const CUSTOM_INPUT_PROPERTY: {
       },
     },
   }),
+  file_undefined: JSON_FILE_PROPERTY,
+  textarea_undefined: {
+    type: 'string',
+    'x-schema-form-type': 'textarea',
+    fieldHtmlClass: 'height-200',
+  },
 };
 
 @Component({
@@ -89,7 +85,7 @@ const CUSTOM_INPUT_PROPERTY: {
   styleUrls: ['./editable-json-schema-form.component.scss'],
 })
 export class EditableJsonSchemaFormComponent
-  implements OnInit, OnDestroy, AfterViewInit {
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges {
   @Input() schema: IJsonSchema;
   @Input() public layout: IJsonLayoutProperty[] = [];
   @Input() entity: {
@@ -164,6 +160,12 @@ export class EditableJsonSchemaFormComponent
     this.layoutEdit = [];
     Object.keys(this.schema.properties).forEach((key) => {
       this.addCustomInput(key, inputLayoutProperty);
+      if (
+        'object' === this.schemaView.properties[key].type &&
+        !this.entity[key]
+      ) {
+        this.entity[key] = {};
+      }
       if (key in inputLayoutProperty) {
         this.layoutEdit.push(inputLayoutProperty[key]);
       } else {
@@ -188,6 +190,9 @@ export class EditableJsonSchemaFormComponent
       this.schemaView.properties[key].readonly = true;
       this.schemaView.properties[key].readOnly = true;
       this.schemaView.properties[key].disabled = true;
+      /* this.schemaView.properties[key].fieldHtmlClass =
+        'form-control-plaintext border';*/
+      this.schemaView.properties[key].htmlClass = 'form-group-plaintext';
     }
     this.layoutView.forEach((property) => {
       if (_.isObject(property) && 'key' in (property as any)) {
@@ -197,6 +202,19 @@ export class EditableJsonSchemaFormComponent
     });
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
+  }
+
+  public ngOnChanges() {
+    if (!!this.schemaView?.properties) {
+      Object.keys(this.schemaView.properties).forEach((key) => {
+        if (
+          'object' === this.schemaView.properties[key].type &&
+          !this.entity[key]
+        ) {
+          this.entity[key] = {};
+        }
+      });
+    }
   }
 
   public openModal(template: TemplateRef<any>) {
@@ -210,16 +228,28 @@ export class EditableJsonSchemaFormComponent
     }
     const type =
       this.schema.properties[key].type +
-      '-' +
+      '_' +
       (this.schema.properties[key]['x-schema-form'] &&
         this.schema.properties[key]['x-schema-form'].type);
     if (type in CUSTOM_INPUT_PROPERTY) {
       this.schemaView.properties[key].type = CUSTOM_INPUT_PROPERTY[type].type;
       this.schemaEdit.properties[key].type = CUSTOM_INPUT_PROPERTY[type].type;
+      if (!this.schemaView.properties[key]['x-schema-form']) {
+        this.schemaView.properties[key]['x-schema-form'] = {};
+      }
       this.schemaView.properties[key]['x-schema-form'].type =
         CUSTOM_INPUT_PROPERTY[type]['x-schema-form-type'];
+      if (!this.schemaEdit.properties[key]['x-schema-form']) {
+        this.schemaEdit.properties[key]['x-schema-form'] = {};
+      }
       this.schemaEdit.properties[key]['x-schema-form'].type =
         CUSTOM_INPUT_PROPERTY[type]['x-schema-form-type'];
+      if (CUSTOM_INPUT_PROPERTY[type].properties) {
+        this.schemaView.properties[key].properties =
+          CUSTOM_INPUT_PROPERTY[type].properties;
+        this.schemaEdit.properties[key].properties =
+          CUSTOM_INPUT_PROPERTY[type].properties;
+      }
       if (CUSTOM_INPUT_PROPERTY[type].validator) {
         inputLayoutProperty[key].validator = inputLayoutProperty[key].validator
           ? Validators.compose([

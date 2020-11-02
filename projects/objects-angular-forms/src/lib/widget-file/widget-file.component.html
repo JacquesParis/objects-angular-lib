@@ -6,29 +6,50 @@
     [style.display]="options?.notitle ? 'none' : ''"
     [innerHTML]="options?.title"
   ></label>
-  <input
-    [attr.aria-describedby]="'control' + layoutNode?._id + 'Status'"
-    [attr.list]="'control' + layoutNode?._id + 'Autocomplete'"
-    [attr.maxlength]="options?.maxLength"
-    [attr.minlength]="options?.minLength"
-    [attr.pattern]="options?.pattern"
-    [attr.placeholder]="options?.placeholder"
-    [attr.required]="options?.required"
-    [class]="'form-control-file'"
-    [disabled]="controlDisabled"
-    [id]="'control' + layoutNode?._id"
-    [name]="controlName"
-    [readonly]="options?.readonly ? 'readonly' : null"
-    [type]="layoutNode?.type"
-    (change)="handleFileInput($event.target.files)"
-  />
-  <datalist
-    *ngIf="options?.typeahead?.source"
-    [id]="'control' + layoutNode?._id + 'Autocomplete'"
-  >
-    <option
-      *ngFor="let word of options?.typeahead?.source"
-      [value]="word"
-    ></option>
-  </datalist>
+
+  <div class="input-group border align-items-center py-3">
+    <img *ngIf="!!img" [src]="img" class="input-group-prepend loadedImg col" />
+    <input
+      *ngIf="editableFormDirective.isViewMode"
+      type="text"
+      readonly
+      class="col form-control-plaintext"
+      [value]="name ? name : 'No file selected'"
+    />
+    <div
+      class="custom-file mr-3"
+      [class.ml-3]="!img"
+      *ngIf="editableFormDirective.isEditMode"
+    >
+      <input
+        [attr.aria-describedby]="'control' + layoutNode?._id + 'Status'"
+        [attr.list]="'control' + layoutNode?._id + 'Autocomplete'"
+        [attr.maxlength]="options?.maxLength"
+        [attr.minlength]="options?.minLength"
+        [attr.pattern]="options?.pattern"
+        [attr.placeholder]="options?.placeholder"
+        [attr.required]="options?.required"
+        [class]="'custom-file-input'"
+        [disabled]="controlDisabled"
+        [id]="'control' + layoutNode?._id"
+        [name]="controlName"
+        [readonly]="options?.readonly ? 'readonly' : null"
+        [type]="layoutNode?.type"
+        (change)="handleFileInput($event.target.files)"
+      />
+      <label class="custom-file-label" [for]="'control' + layoutNode?._id">{{
+        name ? name : "Choose file..."
+      }}</label>
+    </div>
+    <div
+      class="input-group-apend"
+      *ngIf="!!img && editableFormDirective.isEditMode"
+    >
+      <i-bs
+        name="trash"
+        class="btn btn-outline-danger mr-3 border-0"
+        (click)="remove()"
+      ></i-bs>
+    </div>
+  </div>
 </div>
