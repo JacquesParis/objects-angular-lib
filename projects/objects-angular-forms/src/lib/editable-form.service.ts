@@ -26,7 +26,6 @@ export class EditableFormService {
   constructor(private widgetLibrary: WidgetLibraryService) {
     widgetLibrary.registerWidget('file-url', WidgetFileComponent);
     widgetLibrary.registerWidget('file', WidgetFileComponent);
-    console.log(widgetLibrary.getAllWidgets());
   }
 
   public regsterWidgetValue(value: any) {
