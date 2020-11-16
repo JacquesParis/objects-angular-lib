@@ -10,7 +10,8 @@
     "e2e": "ng e2e",
     "forms": "ng build objects-angular-forms",
     "watch-forms": "ng build objects-angular-forms --watch",
-    "lib": "npm run build && git add -A && git commit -m \"lib\" && npm publish dist/objects-angular-forms --access=public"
+    "update": "npm uninstall @jacquesparis/objects-client && npm install --save-dev @jacquesparis/objects-client",
+    "lib": "npm run update && npm run build && git add -A && git commit -m \"lib\" && npm publish dist/objects-angular-forms --access=public"
   },
   "private": true,
   "dependencies": {},
