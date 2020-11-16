@@ -9,7 +9,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "forms": "ng build objects-angular-forms",
-    "watch-forms": "ng build objects-angular-forms --watch",
+    "watch": "ng build objects-angular-forms --watch",
+    "dev": "npm uninstall @jacquesparis/objects-client && npm install --save-dev ../objects-client",
     "update": "npm uninstall @jacquesparis/objects-client && npm install --save-dev @jacquesparis/objects-client",
     "lib": "npm run update && npm run build && git add -A && git commit -m \"lib\" && npm publish dist/objects-angular-forms --access=public"
   },
@@ -32,7 +33,7 @@
     "@angular/platform-browser": "~9.1.0",
     "@angular/platform-browser-dynamic": "~9.1.0",
     "@angular/router": "~9.1.0",
-    "@jacquesparis/objects-client": "0.0.1-SNAPSHOT.1",
+    "@jacquesparis/objects-client": "file:../objects-client",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.19.1",
