@@ -36,7 +36,7 @@ export class EditableFormService {
   public updateWidgetValues(value: any) {
     if (_.isArray(value)) {
       value.forEach((element) => {
-        this.updateWidgetValues(value);
+        this.updateWidgetValues(element);
       });
     } else if (_.isObject(value)) {
       for (let key in value) {

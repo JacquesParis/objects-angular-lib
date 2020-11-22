@@ -138,7 +138,7 @@ export class EditableJsonSchemaFormComponent
     });
     this.subscriptions = [];
   }
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (this.entity.isNewEntity) {
       this.isInCreation = this.entity.isNewEntity;
     }
@@ -158,7 +158,8 @@ export class EditableJsonSchemaFormComponent
       }
     });
     this.layoutEdit = [];
-    Object.keys(this.schema.properties).forEach((key) => {
+    for (const key of Object.keys(this.schema.properties)) {
+      await this.addDynamicOptions(key);
       this.addCustomInput(key, inputLayoutProperty);
       if (
         'object' === this.schemaView.properties[key].type &&
@@ -171,7 +172,7 @@ export class EditableJsonSchemaFormComponent
       } else {
         this.layoutEdit.push(key);
       }
-    });
+    }
 
     this.layoutView = _.cloneDeep(this.layoutEdit);
 
@@ -202,6 +203,21 @@ export class EditableJsonSchemaFormComponent
     });
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
+  }
+  protected async addDynamicOptions(propertyKey: string) {
+    for (const optionFunction in this.schema.properties[propertyKey]) {
+      if (optionFunction.endsWith('Function')) {
+        const option = optionFunction.substr(
+          0,
+          optionFunction.length - 'Function'.length
+        );
+        const optionValue = await this.schema.properties[propertyKey][
+          optionFunction
+        ]();
+        this.schemaView.properties[propertyKey][option] = optionValue;
+        this.schemaEdit.properties[propertyKey][option] = optionValue;
+      }
+    }
   }
 
   public ngOnChanges() {
