@@ -1,3 +1,4 @@
+import { UISchemaElement, JsonSchema } from '@jsonforms/core';
 import { JSON_FILE_PROPERTY } from './../widget-file/widget-file.constant';
 import { CustomInputProperty } from './editable-json-schema-form.constant';
 import {
@@ -98,13 +99,11 @@ export class EditableJsonSchemaFormComponent
   // tslint:disable-next-line: no-output-on-prefix
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
-  @ViewChildren('editionFormQuery') editionFormQuery: QueryList<
-    JsonSchemaFormComponent
-  >;
+  @ViewChildren('editionFormQuery')
+  editionFormQuery: QueryList<JsonSchemaFormComponent>;
 
-  @ViewChildren('viewFormQuery', { read: ElementRef }) viewFormQuery: QueryList<
-    ElementRef
-  >;
+  @ViewChildren('viewFormQuery', { read: ElementRef })
+  viewFormQuery: QueryList<ElementRef>;
   public schemaView: IJsonSchema;
   public editionProperties: any;
   public schemaEdit: IJsonSchema;
@@ -120,6 +119,12 @@ export class EditableJsonSchemaFormComponent
   public isInCreation = false;
   isValid: any;
   subscriptions: Subscription[] = [];
+  schemaJsonEdit: JsonSchema;
+  uischemaJsonEdit: UISchemaElement;
+  schemaJsonView: JsonSchema;
+  uischemaJsonView: UISchemaElement;
+  valueView: any;
+  valueEdit: any;
   get viewProperties() {
     return this.editionPropertiesCompleted;
   }
@@ -138,10 +143,47 @@ export class EditableJsonSchemaFormComponent
     });
     this.subscriptions = [];
   }
+
+  async initJsonFormsObject(
+    schemaJson,
+    uischemaJson = { type: 'VerticalLayout', elements: [] }
+  ): Promise<UISchemaElement> {
+    const required = [];
+    for (const key of Object.keys(schemaJson.properties)) {
+      uischemaJson.elements.push({
+        type: 'Control',
+        scope: '#/properties/' + key,
+        options: {
+          file: 'file' === schemaJson.properties[key].type,
+        },
+      });
+      if (schemaJson.properties[key].required) {
+        delete schemaJson.properties[key].required;
+        required.push(key);
+      }
+    }
+    schemaJson.required = required;
+    return uischemaJson;
+  }
+  async initJsonForms(): Promise<void> {
+    this.schemaJsonEdit = _.cloneDeep(this.schema);
+    this.uischemaJsonEdit = await this.initJsonFormsObject(this.schemaJsonEdit);
+    this.schemaJsonView = _.cloneDeep(this.schemaJsonEdit);
+    this.uischemaJsonView = _.cloneDeep(this.uischemaJsonEdit);
+    for (const uiElement of (this.uischemaJsonView as any).elements) {
+      uiElement.options.readonly = true;
+    }
+  }
+  initJsonFormsValues() {
+    this.valueView = _.cloneDeep(this.viewProperties);
+    this.valueEdit = _.cloneDeep(this.editionProperties);
+  }
+
   async ngOnInit(): Promise<void> {
     if (this.entity.isNewEntity) {
       this.isInCreation = this.entity.isNewEntity;
     }
+    this.initJsonForms();
     this.schemaView = _.cloneDeep(this.schema);
     this.schemaEdit = _.cloneDeep(this.schema);
     this.validators = {};
@@ -203,6 +245,7 @@ export class EditableJsonSchemaFormComponent
     });
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
+    this.initJsonFormsValues();
   }
   protected async addDynamicOptions(propertyKey: string) {
     for (const optionFunction in this.schema.properties[propertyKey]) {
@@ -377,12 +420,18 @@ export class EditableJsonSchemaFormComponent
   protected set changedValue(value: any) {
     this._changedValue = value;
   }
-
+  valueEditChange(value) {
+    this.changedValue = value;
+    this.isValid = !_.isEqual(this.valueEdit, this.changedValue);
+  }
   switchMode() {
     this.error = '';
+
     if (this.libEditableForm.isViewMode) {
       this.editionProperties = this.editionPropertiesCompleted;
     }
+
+    this.initJsonFormsValues();
     this.libEditableForm.switchMode();
   }
   async saveEditMode() {
@@ -399,6 +448,7 @@ export class EditableJsonSchemaFormComponent
     } catch (error) {
       this.error = error.message ? error.message : 'Unexpected error';
     }
+    this.initJsonFormsValues();
   }
   async delete() {
     this.error = '';

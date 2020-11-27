@@ -13,3 +13,4 @@ export * from './lib/editable-json-schema-form/editable-json-schema-form.compone
 export * from './lib/editable-file/editable-file.component';
 export * from './lib/editable-abstract/i-json-schema';
 export * from './lib/widget-file/widget-file.component';
+export * from './lib/json-form/json-form.component';

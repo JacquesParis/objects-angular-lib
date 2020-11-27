@@ -1,0 +1,14 @@
+Hello<mat-form-field fxFlex [fxHide]="hidden">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    matInput
+    [type]="getType()"
+    (input)="onChange($event)"
+    [id]="id"
+    [formControl]="form"
+  />
+  <mat-hint *ngIf="shouldShowUnfocusedDescription()">{{
+    description
+  }}</mat-hint>
+  <mat-error>{{ error }}</mat-error>
+</mat-form-field>

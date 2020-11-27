@@ -13,6 +13,13 @@
     "@angular/material": "^9.2.1",
     "angular6-json-schema-form": "^8.0.0",
     "ngx-bootstrap-icons": "^1.2.1",
-    "ngx-bootstrap": "^6.1.0"
+    "ngx-bootstrap": "^6.1.0",
+    "@jsonforms/angular": "^2.4.1",
+    "@jsonforms/angular-material": "^2.4.1",
+    "@jsonforms/core": "^2.4.1",
+    "json-refs": "^3.0.15",
+    "ajv": "^6.12.6",
+    "redux": "^4.0.5",
+    "path": "^0.12.7"
   }
 }

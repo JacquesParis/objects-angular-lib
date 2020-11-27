@@ -7,26 +7,19 @@
   <div *ngIf="error" class="alert alert-danger" role="alert">
     {{ error }}
   </div>
-  <json-schema-form
-    #viewFormQuery
-    [schema]="schemaView"
-    framework="bootstrap-4"
-    [data]="viewProperties"
-    *ngIf="libEditableForm.isViewMode"
-    [layout]="layoutView"
-  >
-  </json-schema-form>
-  <json-schema-form
-    #editionFormQuery
-    [schema]="schemaEdit"
-    framework="bootstrap-4"
-    (onSubmit)="onSubmit($event)"
-    (onChanges)="onChange($event)"
-    [data]="editionProperties"
-    *ngIf="libEditableForm.isEditMode"
-    [layout]="layoutEdit"
-  >
-  </json-schema-form>
+  <lib-json-form
+    [data]="valueView"
+    [schema]="schemaJsonView"
+    *ngIf="valueView && libEditableForm.isViewMode"
+    [uischema]="uischemaJsonView"
+  ></lib-json-form>
+  <lib-json-form
+    [data]="valueEdit"
+    [schema]="schemaJsonEdit"
+    *ngIf="valueEdit && libEditableForm.isEditMode"
+    [uischema]="uischemaJsonEdit"
+    (valueChanged)="valueEditChange($event)"
+  ></lib-json-form>
 
   <button
     class="btn mr-2 mt-2"

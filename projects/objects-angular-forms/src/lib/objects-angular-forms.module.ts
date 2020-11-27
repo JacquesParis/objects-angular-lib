@@ -1,3 +1,5 @@
+import { FileRendererComponent } from './json-form/file-renderer/file-renderer.component';
+import { JsonFormComponent } from './json-form/json-form.component';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EditableFormDirective } from './editable-form.directive';
@@ -11,6 +13,9 @@ import { Bootstrap4FrameworkModule } from 'angular6-json-schema-form';
 import { EditableFileComponent } from './editable-file/editable-file.component';
 import { WidgetFileComponent } from './widget-file/widget-file.component';
 import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
+import { JsonFormsModule } from '@jsonforms/angular';
+import { JsonFormsAngularMaterialModule } from '@jsonforms/angular-material';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -22,6 +27,8 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     EditableJsonSchemaFormComponent,
     EditableFileComponent,
     WidgetFileComponent,
+    JsonFormComponent,
+    FileRendererComponent,
   ],
   imports: [
     CommonModule,
@@ -29,6 +36,9 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     Bootstrap4FrameworkModule,
     ReactiveFormsModule,
     NgxBootstrapIconsModule,
+    JsonFormsModule,
+    JsonFormsAngularMaterialModule,
+    MatFormFieldModule,
   ],
   exports: [
     EditableInputComponent,
@@ -39,6 +49,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     EditableJsonSchemaFormComponent,
     EditableFileComponent,
     WidgetFileComponent,
+    JsonFormComponent,
   ],
 })
 export class ObjectsAngularFormsModule {
