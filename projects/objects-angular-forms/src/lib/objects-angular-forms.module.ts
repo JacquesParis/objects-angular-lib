@@ -1,3 +1,5 @@
+import { JsonSchemaFormlyComponent } from './formly-lib/json-schema-formly/json-schema-formly.component';
+import { FormlyLibModule } from './formly-lib/formly-lib.module';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EditableFormDirective } from './editable-form.directive';
@@ -29,6 +31,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     Bootstrap4FrameworkModule,
     ReactiveFormsModule,
     NgxBootstrapIconsModule,
+    FormlyLibModule,
   ],
   exports: [
     EditableInputComponent,
@@ -39,6 +42,8 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     EditableJsonSchemaFormComponent,
     EditableFileComponent,
     WidgetFileComponent,
+    FormlyLibModule,
+    JsonSchemaFormlyComponent,
   ],
 })
 export class ObjectsAngularFormsModule {

@@ -98,13 +98,11 @@ export class EditableJsonSchemaFormComponent
   // tslint:disable-next-line: no-output-on-prefix
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
-  @ViewChildren('editionFormQuery') editionFormQuery: QueryList<
-    JsonSchemaFormComponent
-  >;
+  @ViewChildren('editionFormQuery')
+  editionFormQuery: QueryList<JsonSchemaFormComponent>;
 
-  @ViewChildren('viewFormQuery', { read: ElementRef }) viewFormQuery: QueryList<
-    ElementRef
-  >;
+  @ViewChildren('viewFormQuery', { read: ElementRef })
+  viewFormQuery: QueryList<ElementRef>;
   public schemaView: IJsonSchema;
   public editionProperties: any;
   public schemaEdit: IJsonSchema;
@@ -138,12 +136,51 @@ export class EditableJsonSchemaFormComponent
     });
     this.subscriptions = [];
   }
+
+  normalizeJson(jsonShema: IJsonSchema): IJsonSchema {
+    if (jsonShema?.properties) {
+      jsonShema.required = [];
+      for (const key of Object.keys(jsonShema.properties)) {
+        if (jsonShema.properties[key].required) {
+          jsonShema.required.push(key);
+        }
+        this.normalizeJson(jsonShema.properties[key]);
+
+        if (
+          'array' === jsonShema.properties[key].type &&
+          jsonShema.properties[key].items.enum &&
+          jsonShema.properties[key].items.enumNames &&
+          'string' === jsonShema.properties[key].items?.type
+        ) {
+          jsonShema.properties[key].items.oneOf = [];
+          for (const valueIndex of Object.keys(
+            jsonShema.properties[key].items?.enum
+          )) {
+            jsonShema.properties[key].items.oneOf.push({
+              title: jsonShema.properties[key].items?.enumNames[valueIndex],
+              const: jsonShema.properties[key].items?.enum[valueIndex],
+            });
+          }
+          delete jsonShema.properties[key].items.enum;
+          delete jsonShema.properties[key].items.enumNames;
+          /*
+          jsonShema.properties[key].widget = {
+            formlyConfig: {
+              type: 'checkbox',
+            },
+          };*/
+        }
+      }
+    }
+    return jsonShema;
+  }
+
   async ngOnInit(): Promise<void> {
     if (this.entity.isNewEntity) {
       this.isInCreation = this.entity.isNewEntity;
     }
-    this.schemaView = _.cloneDeep(this.schema);
-    this.schemaEdit = _.cloneDeep(this.schema);
+    this.schemaView = this.normalizeJson(_.cloneDeep(this.schema));
+    this.schemaEdit = _.cloneDeep(this.schemaView);
     this.validators = {};
 
     type JsonLayoutProperties = {
@@ -324,15 +361,9 @@ export class EditableJsonSchemaFormComponent
   }
 
   protected addValidators() {
-    if (
-      this.editionFormQuery.first &&
-      this.editionFormQuery.first.jsf &&
-      this.editionFormQuery.first.jsf.formGroup
-    ) {
-      const formGroup: FormGroup = this.editionFormQuery.first.jsf
-        .formGroup as FormGroup;
-      const formControls: { [key: string]: AbstractControl } = (this
-        .editionFormQuery.first.jsf.formGroup as FormGroup).controls;
+    if (this.formGroup) {
+      const formControls: { [key: string]: AbstractControl } = this.formGroup
+        .controls;
       Object.keys(this.validators).forEach((key) => {
         const formControl = formControls[key];
         if (formControl.validator) {
@@ -411,18 +442,20 @@ export class EditableJsonSchemaFormComponent
     }
   }
 
-  get _isValid() {
-    if (
-      this.editionFormQuery &&
-      this.editionFormQuery.first &&
-      this.editionFormQuery.first.jsf &&
-      this.editionFormQuery.first.jsf.formGroup
-    ) {
-      const formGroup: FormGroup = this.editionFormQuery.first.jsf
-        .formGroup as FormGroup;
+  get formGroup(): FormGroup {
+    if (this.editionFormQuery?.first?.jsf?.formGroup) {
+      return this.editionFormQuery.first.jsf.formGroup;
+    }
+    if (this.editionFormQuery?.first?.form) {
+      return this.editionFormQuery.first.form;
+    }
+    return undefined;
+  }
 
+  get _isValid() {
+    if (this.formGroup) {
       return _.every(
-        Object.values(formGroup.controls),
+        Object.values(this.formGroup.controls),
         (control: AbstractControl) => {
           return !control.errors;
         }

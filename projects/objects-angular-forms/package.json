@@ -13,6 +13,9 @@
     "@angular/material": "^9.2.1",
     "angular6-json-schema-form": "^8.0.0",
     "ngx-bootstrap-icons": "^1.2.1",
-    "ngx-bootstrap": "^6.1.0"
+    "ngx-bootstrap": "^6.1.0",
+    "@ngx-formly/schematics": "^5.10.6",
+    "@ngx-formly/core": "^5.0.0",
+    "@ngx-formly/bootstrap": "^5.0.0"
   }
 }

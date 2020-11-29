@@ -7,6 +7,21 @@
   <div *ngIf="error" class="alert alert-danger" role="alert">
     {{ error }}
   </div>
+  <app-json-schema-formly
+    [model]="viewProperties"
+    [schema]="schemaView"
+    *ngIf="libEditableForm.isViewMode"
+  ></app-json-schema-formly>
+
+  <app-json-schema-formly
+    [model]="editionProperties"
+    [schema]="schemaEdit"
+    (onSubmit)="onSubmit($event)"
+    (onChanges)="onChange($event)"
+    *ngIf="libEditableForm.isEditMode"
+    #editionFormQuery
+  ></app-json-schema-formly>
+  <!--
   <json-schema-form
     #viewFormQuery
     [schema]="schemaView"
@@ -27,7 +42,7 @@
     [layout]="layoutEdit"
   >
   </json-schema-form>
-
+-->
   <button
     class="btn mr-2 mt-2"
     [class.btn-primary]="libEditableForm.isViewMode"
