@@ -98,13 +98,11 @@ export class EditableJsonSchemaFormComponent
   // tslint:disable-next-line: no-output-on-prefix
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
-  @ViewChildren('editionFormQuery') editionFormQuery: QueryList<
-    JsonSchemaFormComponent
-  >;
+  @ViewChildren('editionFormQuery')
+  editionFormQuery: QueryList<JsonSchemaFormComponent>;
 
-  @ViewChildren('viewFormQuery', { read: ElementRef }) viewFormQuery: QueryList<
-    ElementRef
-  >;
+  @ViewChildren('viewFormQuery', { read: ElementRef })
+  viewFormQuery: QueryList<ElementRef>;
   public schemaView: IJsonSchema;
   public editionProperties: any;
   public schemaEdit: IJsonSchema;
@@ -144,62 +142,6 @@ export class EditableJsonSchemaFormComponent
     }
     this.schemaView = _.cloneDeep(this.schema);
     this.schemaEdit = _.cloneDeep(this.schema);
-    this.validators = {};
-
-    type JsonLayoutProperties = {
-      [key: string]: IJsonLayoutProperty;
-    };
-
-    const inputLayoutProperty: JsonLayoutProperties = {};
-    this.layout.forEach((property) => {
-      inputLayoutProperty[property.key] = property;
-      if (property.validator) {
-        this.validators[property.key] = property.validator;
-      }
-    });
-    this.layoutEdit = [];
-    Object.keys(this.schema.properties).forEach((key) => {
-      this.addCustomInput(key, inputLayoutProperty);
-      if (
-        'object' === this.schemaView.properties[key].type &&
-        !this.entity[key]
-      ) {
-        this.entity[key] = {};
-      }
-      if (key in inputLayoutProperty) {
-        this.layoutEdit.push(inputLayoutProperty[key]);
-      } else {
-        this.layoutEdit.push(key);
-      }
-    });
-
-    this.layoutView = _.cloneDeep(this.layoutEdit);
-
-    this.layoutView.push({
-      type: 'submit',
-      title: 'OK',
-      condition: 'false',
-    });
-    this.layoutEdit.push({
-      type: 'submit',
-      title: 'OK',
-      htmlClass: 'd-none',
-    });
-
-    for (const key of Object.keys(this.schemaView.properties)) {
-      this.schemaView.properties[key].readonly = true;
-      this.schemaView.properties[key].readOnly = true;
-      this.schemaView.properties[key].disabled = true;
-      /* this.schemaView.properties[key].fieldHtmlClass =
-        'form-control-plaintext border';*/
-      this.schemaView.properties[key].htmlClass = 'form-group-plaintext';
-    }
-    this.layoutView.forEach((property) => {
-      if (_.isObject(property) && 'key' in (property as any)) {
-        (property as any).readonly = true;
-        (property as any).disabled = true;
-      }
-    });
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
   }

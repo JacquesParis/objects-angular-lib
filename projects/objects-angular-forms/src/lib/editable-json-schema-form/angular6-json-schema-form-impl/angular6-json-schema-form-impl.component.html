@@ -1,0 +1,11 @@
+<json-schema-form
+  #editionFormQuery
+  [schema]="schemaEdit"
+  framework="bootstrap-4"
+  (onSubmit)="onSubmit($event)"
+  (onChanges)="onChange($event)"
+  [data]="editionProperties"
+  *ngIf="libEditableForm.isEditMode"
+  [layout]="layoutEdit"
+>
+</json-schema-form>
