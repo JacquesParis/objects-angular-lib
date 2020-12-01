@@ -1,0 +1,50 @@
+<div [class.simpleTypeArray]="simpleTypeArray">
+  <ng-container *ngFor="let item of model; let itemIndex = index">
+    <div class="">
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <div class="col">
+              <json-schema-form
+                [schema]="itemSchema"
+                framework="bootstrap-4"
+                [data]="item"
+                [layout]="itemLayout"
+                (onSubmit)="itemSubmited($event, itemIndex)"
+                (onChanges)="itemChanged($event, itemIndex)"
+              ></json-schema-form>
+            </div>
+            <div class="col-1 px-0 readonly-hidden">
+              <i-bs
+                name="trash"
+                class="btn btn-outline-danger px-0 border-0"
+                (click)="remove(itemIndex)"
+              ></i-bs>
+            </div>
+          </div>
+        </div>
+        <div class="col-1 px-0 readonly-hidden col-up">
+          <i-bs
+            name="plus-circle"
+            class="btn btn-outline-danger border-0"
+            (click)="add(itemIndex)"
+          ></i-bs>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <div [class.readonly-hidden]="0 !== model.length">
+    <div class="row">
+      <div class="col">
+        <div *ngIf="0 === model.length">-</div>
+      </div>
+      <div class="col-1 px-0 col-up readonly-hidden">
+        <i-bs
+          name="plus-circle"
+          class="btn btn-outline-danger border-0"
+          (click)="add(model.length)"
+        ></i-bs>
+      </div>
+    </div>
+  </div>
+</div>

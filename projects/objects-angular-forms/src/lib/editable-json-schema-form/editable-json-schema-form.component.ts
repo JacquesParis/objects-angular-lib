@@ -98,13 +98,11 @@ export class EditableJsonSchemaFormComponent
   // tslint:disable-next-line: no-output-on-prefix
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
-  @ViewChildren('editionFormQuery') editionFormQuery: QueryList<
-    JsonSchemaFormComponent
-  >;
+  @ViewChildren('editionFormQuery')
+  editionFormQuery: QueryList<JsonSchemaFormComponent>;
 
-  @ViewChildren('viewFormQuery', { read: ElementRef }) viewFormQuery: QueryList<
-    ElementRef
-  >;
+  @ViewChildren('viewFormQuery', { read: ElementRef })
+  viewFormQuery: QueryList<ElementRef>;
   public schemaView: IJsonSchema;
   public editionProperties: any;
   public schemaEdit: IJsonSchema;
@@ -166,7 +164,19 @@ export class EditableJsonSchemaFormComponent
       ) {
         this.entity[key] = {};
       }
+
+      if (
+        'array' === this.schemaView.properties[key].type &&
+        !this.entity[key]
+      ) {
+        this.entity[key] = [];
+      }
       if (key in inputLayoutProperty) {
+        if ('array' === this.schemaView.properties[key].type) {
+          inputLayoutProperty[key].arrayItems = this.schemaView.properties[
+            key
+          ].items;
+        }
         this.layoutEdit.push(inputLayoutProperty[key]);
       } else {
         this.layoutEdit.push(key);

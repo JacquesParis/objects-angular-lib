@@ -25,6 +25,7 @@ export interface IJsonLayoutProperty {
   copyValueTo?: string[];
   destroyStrategy?: string;
   validator?: ValidatorFn;
+  arrayItems?: IJsonSchema;
 }
 
 export type IJsonLayout = (string | IJsonLayoutProperty)[];

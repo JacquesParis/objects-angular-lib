@@ -1,3 +1,4 @@
+import { WidgetArrayComponent } from './widget-array/widget-array.component';
 import { WidgetFileComponent } from './widget-file/widget-file.component';
 import { Injectable } from '@angular/core';
 import { WidgetLibraryService } from 'angular6-json-schema-form';
@@ -26,6 +27,7 @@ export class EditableFormService {
   constructor(private widgetLibrary: WidgetLibraryService) {
     widgetLibrary.registerWidget('file-url', WidgetFileComponent);
     widgetLibrary.registerWidget('file', WidgetFileComponent);
+    widgetLibrary.registerWidget('array', WidgetArrayComponent);
   }
 
   public regsterWidgetValue(value: any) {
@@ -36,10 +38,10 @@ export class EditableFormService {
   public updateWidgetValues(value: any) {
     if (_.isArray(value)) {
       value.forEach((element) => {
-        this.updateWidgetValues(value);
+        this.updateWidgetValues(element);
       });
     } else if (_.isObject(value)) {
-      for (let key in value) {
+      for (const key in value) {
         if (value[key] in this.widgetValues) {
           value[key] = this.widgetValues[value[key]];
         } else {

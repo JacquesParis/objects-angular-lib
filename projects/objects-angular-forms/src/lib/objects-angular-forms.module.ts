@@ -1,3 +1,4 @@
+import { WidgetArrayComponent } from './widget-array/widget-array.component';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EditableFormDirective } from './editable-form.directive';
@@ -22,6 +23,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     EditableJsonSchemaFormComponent,
     EditableFileComponent,
     WidgetFileComponent,
+    WidgetArrayComponent,
   ],
   imports: [
     CommonModule,
@@ -39,6 +41,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     EditableJsonSchemaFormComponent,
     EditableFileComponent,
     WidgetFileComponent,
+    WidgetArrayComponent,
   ],
 })
 export class ObjectsAngularFormsModule {
