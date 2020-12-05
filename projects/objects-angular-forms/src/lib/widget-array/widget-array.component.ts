@@ -1,8 +1,11 @@
-import { IJsonLayoutProperty } from './../../../../../dist/objects-angular-forms/lib/editable-abstract/i-json-schema.d';
-import { IJsonLayout, IJsonSchema } from './../editable-abstract/i-json-schema';
+import {
+  IJsonLayout,
+  IJsonSchema,
+  IJsonLayoutProperty,
+} from './../editable-abstract/i-json-schema';
 import { EditableFormDirective } from './../editable-form.directive';
 import { JsonSchemaFormService } from 'angular6-json-schema-form';
-import { AbstractControl, FormArray, FormControl } from '@angular/forms';
+import { FormArray, FormControl } from '@angular/forms';
 import { Component, OnInit, Input } from '@angular/core';
 import * as _ from 'lodash-es';
 
