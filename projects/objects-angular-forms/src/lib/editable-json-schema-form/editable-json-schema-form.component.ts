@@ -118,6 +118,7 @@ export class EditableJsonSchemaFormComponent
   public isInCreation = false;
   isValid: any;
   subscriptions: Subscription[] = [];
+  isReady: boolean = false;
   get viewProperties() {
     return this.editionPropertiesCompleted;
   }
@@ -213,6 +214,7 @@ export class EditableJsonSchemaFormComponent
     });
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
+    this.isReady = true;
   }
   protected async addDynamicOptions(propertyKey: string) {
     for (const optionFunction in this.schema.properties[propertyKey]) {

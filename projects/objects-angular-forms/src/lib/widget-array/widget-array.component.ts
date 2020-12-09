@@ -5,7 +5,7 @@ import {
 } from './../editable-abstract/i-json-schema';
 import { EditableFormDirective } from './../editable-form.directive';
 import { JsonSchemaFormService } from 'angular6-json-schema-form';
-import { FormArray, FormControl } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Component, OnInit, Input } from '@angular/core';
 import * as _ from 'lodash-es';
 
@@ -41,11 +41,62 @@ export class WidgetArrayComponent implements OnInit {
     public editableFormDirective: EditableFormDirective
   ) {}
 
+  defaultValue(items: IJsonSchema) {
+    switch (items.type) {
+      case 'array':
+        return [null];
+      case 'object':
+        return {};
+      case 'string':
+        return null;
+      default:
+        return null;
+    }
+  }
+
+  emptyInsideValue(items: IJsonSchema = this.options.arrayItems) {
+    switch (items.type) {
+      case 'object':
+        const result = {};
+        for (const key of Object.keys(items.properties)) {
+          result[key] = this.emptyOusideValue(items.properties[key]);
+        }
+        return result;
+      case 'array':
+        return { item: [this.emptyOusideValue(items.items)] };
+
+      case 'string':
+        return { item: this.defaultValue(items) };
+      default:
+        return { item: this.defaultValue(items) };
+    }
+  }
+  emptyOusideValue(items: IJsonSchema = this.options.arrayItems) {
+    switch (items.type) {
+      case 'object':
+        return this.emptyInsideValue(items);
+      case 'array':
+        return [this.emptyOusideValue(items.items)];
+      default:
+        return this.defaultValue(items);
+    }
+  }
+
   ngOnInit() {
     this.options = this.layoutNode.options || {};
     switch (this.options?.arrayItems?.type) {
       case 'object':
-        this.itemLayout = Object.keys(this.options?.arrayItems?.properties);
+        this.itemLayout = Object.keys(this.options?.arrayItems?.properties).map(
+          (key) => {
+            const layout: IJsonLayoutProperty = { key };
+            if ('array' === this.options?.arrayItems?.properties[key].type) {
+              layout.arrayItems = this.options?.arrayItems?.properties[
+                key
+              ].items;
+            }
+            return layout;
+          }
+        );
         this.itemSchema = this.options.arrayItems;
         this.simpleTypeArray = false;
         break;
@@ -67,7 +118,9 @@ export class WidgetArrayComponent implements OnInit {
     this.model = [];
     switch (this.options?.arrayItems?.type) {
       case 'object':
-        this.model = this.controlValue.filter((item) => null !== item);
+        this.model = this.controlValue.filter(
+          (item) => null !== item && !_.isEqual(this.emptyInsideValue(), item)
+        );
         break;
       default:
         this.model = this.controlValue
@@ -105,29 +158,67 @@ export class WidgetArrayComponent implements OnInit {
         switch (this.options?.arrayItems?.type) {
           case 'object':
             this.controlValue[valueIndex] =
-              undefined === this.model[valueIndex]
-                ? null
-                : this.model[valueIndex];
+              undefined === this.model[valueIndex] ||
+              _.isEqual(this.emptyInsideValue(), this.model[valueIndex].item)
+                ? this.emptyOusideValue()
+                : _.merge({}, this.emptyOusideValue(), this.model[valueIndex]);
+            for (const key of Object.keys(this.controlValue[valueIndex])) {
+              while (
+                'FormArray' ===
+                  (this.formControl.controls[valueIndex] as FormGroup).controls[
+                    key
+                  ].constructor.name &&
+                _.isArray(this.controlValue[valueIndex][key]) &&
+                this.controlValue[valueIndex][key].length >
+                  ((this.formControl.controls[valueIndex] as FormGroup)
+                    .controls[key] as FormArray).controls.length
+              ) {
+                ((this.formControl.controls[valueIndex] as FormGroup).controls[
+                  key
+                ] as FormArray).controls.push(
+                  ((this.formControl.controls[valueIndex] as FormGroup)
+                    .controls[key] as FormArray).controls[0]
+                );
+              }
+
+              while (
+                'FormArray' ===
+                  (this.formControl.controls[valueIndex] as FormGroup).controls[
+                    key
+                  ].constructor.name &&
+                _.isArray(this.controlValue[valueIndex][key]) &&
+                this.controlValue[valueIndex][key].length <
+                  ((this.formControl.controls[valueIndex] as FormGroup)
+                    .controls[key] as FormArray).controls.length
+              ) {
+                ((this.formControl.controls[valueIndex] as FormGroup).controls[
+                  key
+                ] as FormArray).controls.pop();
+              }
+            }
             break;
           default:
             this.controlValue[valueIndex] =
-              undefined === this.model[valueIndex].item
-                ? null
+              undefined === this.model[valueIndex].item ||
+              _.isEqual(this.emptyInsideValue(), this.model[valueIndex].item)
+                ? this.emptyOusideValue()
                 : this.model[valueIndex].item;
         }
       } else {
         switch (this.options?.arrayItems?.type) {
           case 'object':
             this.controlValue.push(
-              undefined === this.model[valueIndex]
-                ? null
+              undefined === this.model[valueIndex] ||
+                _.isEqual(this.emptyInsideValue(), this.model[valueIndex].item)
+                ? this.emptyOusideValue()
                 : this.model[valueIndex]
             );
             break;
           default:
             this.controlValue.push(
-              undefined === this.model[valueIndex].item
-                ? null
+              undefined === this.model[valueIndex].item ||
+                _.isEqual(this.emptyInsideValue(), this.model[valueIndex].item)
+                ? this.emptyOusideValue()
                 : this.model[valueIndex].item
             );
         }
@@ -136,18 +227,24 @@ export class WidgetArrayComponent implements OnInit {
     while (this.controlValue.length > this.model.length) {
       this.controlValue.splice(this.controlValue.length - 1, 1);
     }
-    if (0 === this.controlValue.length) {
+    if (
+      0 === this.controlValue.length &&
+      'object' !== this.options?.arrayItems?.type
+    ) {
       this.controlValue = [null];
+    } else if (0 === this.controlValue.length) {
+      this.controlValue = [this.emptyInsideValue()];
     }
     return this.controlValue;
   }
 
   remove(index) {
     this.model.splice(index, 1);
-    if (0 < this.model.length) {
+    const changedValue = this.changedValue;
+    if (1 < this.formControl.controls.length) {
       this.formControl.controls.splice(index, 1);
     }
-    this.jsf.updateValue(this, this.changedValue);
+    this.jsf.updateValue(this, changedValue);
   }
   itemChanged(value, index) {
     if (this.changeItem(value, index)) {
@@ -179,19 +276,20 @@ export class WidgetArrayComponent implements OnInit {
   }
 
   add(index) {
-    this.model.splice(index, 0, {});
+    this.model.splice(index, 0, this.emptyInsideValue());
 
-    if (this.formControl.controls.length < this.model.length) {
+    const changedValue = this.changedValue;
+    if (this.formControl.controls.length < changedValue.length) {
       this.formControl.controls.splice(
         index,
         0,
         new FormControl(
-          null,
+          this.emptyInsideValue(),
           this.formControl.controls[0].validator,
           this.formControl.controls[0].asyncValidator
         )
       );
     }
-    this.jsf.updateValue(this, this.changedValue);
+    this.jsf.updateValue(this, changedValue);
   }
 }
