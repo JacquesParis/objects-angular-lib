@@ -2,6 +2,7 @@
   libEditableForm
   [initialEditMode]="isInCreation"
   #libEditableForm="EditableFormDirective"
+  class="editable-json-schema-form"
 >
   <div *ngIf="entity && isReady">
     <div *ngIf="error" class="alert alert-danger" role="alert">
@@ -34,7 +35,9 @@
       [class.btn-primary]="libEditableForm.isViewMode"
       [class.btn-secondary]="libEditableForm.isEditMode"
       [innerHTML]="libEditableForm.isEditMode ? 'Cancel' : 'Edit'"
-      [disabled]="!isInCreation && libEditableForm.hasActionDisabled"
+      [disabled]="
+        (!isInCreation && libEditableForm.hasActionDisabled) || currentMethod
+      "
       (click)="switchMode()"
     ></button>
     <button
@@ -53,10 +56,47 @@
       class="btn mr-2 mt-2"
       (click)="openModal(confirmDelete)"
       [innerHTML]="'Delete'"
-      [disabled]="libEditableForm.hasActionDisabled"
+      [disabled]="libEditableForm.hasActionDisabled || currentMethod"
     >
       Save
     </button>
+    <button
+      *ngFor="let method of actions"
+      type="button"
+      class="btn mr-2 mt-2"
+      [innerHTML]="method.methodName"
+      [disabled]="libEditableForm.isEditMode || currentMethod"
+      (click)="openMethod(method)"
+    ></button>
+    <div class="card mt-2" *ngIf="currentMethod">
+      <div class="card-header">
+        {{ currentMethod.methodName }}
+      </div>
+      <div
+        class="card-body"
+        libEditableForm
+        [initialEditMode]="true"
+        #actionEditableForm="EditableFormDirective"
+      >
+        <div *ngIf="methodError" class="alert alert-danger" role="alert">
+          {{ methodError }}
+        </div>
+        <json-schema-form
+          [schema]="currentMethod.parameters"
+          [layout]="methodLayout"
+          framework="bootstrap-4"
+          [data]="{}"
+          (onSubmit)="onMethodParametersSubmit($event)"
+          (onChanges)="onMethodParametersChange($event)"
+        >
+        </json-schema-form>
+
+        <a class="btn btn-secondary" (click)="cancelMethod()">Cancel</a>
+        <a class="btn btn-primary ml-2" (click)="runMethod()">{{
+          currentMethod.actionName
+        }}</a>
+      </div>
+    </div>
   </div>
 </div>
 <ng-template #confirmDelete>

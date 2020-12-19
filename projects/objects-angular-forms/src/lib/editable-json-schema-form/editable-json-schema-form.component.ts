@@ -11,6 +11,7 @@ import {
   ElementRef,
   TemplateRef,
   OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import {
   FormGroup,
@@ -93,8 +94,23 @@ export class EditableJsonSchemaFormComponent
     editionProperties: any;
     isNewEntity: boolean;
   };
+  @Input() actions: {
+    methodName: string;
+    methodId: string;
+    parameters: IJsonSchema;
+    actionName: string;
+  }[] = [];
   @Input() saveValue: (value) => Promise<void>;
   @Input() deleteValue: () => Promise<void>;
+  @Input() runAction: (
+    method: {
+      methodName: string;
+      methodId: string;
+      parameters: IJsonSchema;
+      actionName: string;
+    },
+    args
+  ) => Promise<void>;
   // tslint:disable-next-line: no-output-on-prefix
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
@@ -103,6 +119,10 @@ export class EditableJsonSchemaFormComponent
 
   @ViewChildren('viewFormQuery', { read: ElementRef })
   viewFormQuery: QueryList<ElementRef>;
+
+  @ViewChildren('actionEditableForm')
+  actionEditableForm: QueryList<EditableFormDirective>;
+
   public schemaView: IJsonSchema;
   public editionProperties: any;
   public schemaEdit: IJsonSchema;
@@ -116,9 +136,16 @@ export class EditableJsonSchemaFormComponent
     };
   } = {};
   public isInCreation = false;
-  isValid: any;
-  subscriptions: Subscription[] = [];
-  isReady: boolean = false;
+  public isValid: any;
+  private subscriptions: Subscription[] = [];
+  public isReady: boolean = false;
+  public currentMethod: {
+    methodName: string;
+    methodId: string;
+    parameters: IJsonSchema;
+    actionName: string;
+  };
+  public currentMethodParameters: { [key: string]: any };
   get viewProperties() {
     return this.editionPropertiesCompleted;
   }
@@ -126,7 +153,20 @@ export class EditableJsonSchemaFormComponent
   public layoutEdit: IJsonLayout;
   public layoutView: IJsonLayout;
   public error: string;
+  public methodError: string;
   public modalRef: BsModalRef;
+
+  public methodLayout: IJsonLayout = [
+    {
+      key: '*',
+    },
+    {
+      type: 'submit',
+      title: 'OK',
+      htmlClass: 'd-none',
+    },
+  ];
+
   constructor(
     protected editableFormService: EditableFormService,
     protected modalService: BsModalService
@@ -137,12 +177,11 @@ export class EditableJsonSchemaFormComponent
     });
     this.subscriptions = [];
   }
-  async ngOnInit(): Promise<void> {
+
+  protected buildSchemanView() {
     if (this.entity.isNewEntity) {
       this.isInCreation = this.entity.isNewEntity;
     }
-    this.schemaView = _.cloneDeep(this.schema);
-    this.schemaEdit = _.cloneDeep(this.schema);
     this.validators = {};
 
     type JsonLayoutProperties = {
@@ -156,35 +195,18 @@ export class EditableJsonSchemaFormComponent
         this.validators[property.key] = property.validator;
       }
     });
+
     this.layoutEdit = [];
-    for (const key of Object.keys(this.schema.properties)) {
-      await this.addDynamicOptions(key);
-      this.addCustomInput(key, inputLayoutProperty);
-      if (
-        'object' === this.schemaView.properties[key].type &&
-        !this.entity[key]
-      ) {
-        this.entity[key] = {};
-      }
 
-      if (
-        'array' === this.schemaView.properties[key].type &&
-        !this.entity[key]
-      ) {
-        this.entity[key] = [];
-      }
-      if (key in inputLayoutProperty) {
-        if ('array' === this.schemaView.properties[key].type) {
-          inputLayoutProperty[key].arrayItems = this.schemaView.properties[
-            key
-          ].items;
-        }
-        this.layoutEdit.push(inputLayoutProperty[key]);
-      } else {
-        this.layoutEdit.push(key);
-      }
-    }
+    this.constructLayout('', this.schema.properties, inputLayoutProperty);
+    this.schemaView = _.cloneDeep(this.schema);
+    this.schemaEdit = _.cloneDeep(this.schema);
 
+    this.layoutEdit = [
+      {
+        key: '*',
+      },
+    ];
     this.layoutView = _.cloneDeep(this.layoutEdit);
 
     this.layoutView.push({
@@ -202,8 +224,6 @@ export class EditableJsonSchemaFormComponent
       this.schemaView.properties[key].readonly = true;
       this.schemaView.properties[key].readOnly = true;
       this.schemaView.properties[key].disabled = true;
-      /* this.schemaView.properties[key].fieldHtmlClass =
-        'form-control-plaintext border';*/
       this.schemaView.properties[key].htmlClass = 'form-group-plaintext';
     }
     this.layoutView.forEach((property) => {
@@ -212,10 +232,15 @@ export class EditableJsonSchemaFormComponent
         (property as any).disabled = true;
       }
     });
+  }
+  async ngOnInit(): Promise<void> {
+    // this.buildSchemanView();
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
     this.isReady = true;
   }
+
+  /*
   protected async addDynamicOptions(propertyKey: string) {
     for (const optionFunction in this.schema.properties[propertyKey]) {
       if (optionFunction.endsWith('Function')) {
@@ -230,9 +255,13 @@ export class EditableJsonSchemaFormComponent
         this.schemaEdit.properties[propertyKey][option] = optionValue;
       }
     }
-  }
+  }*/
 
-  public ngOnChanges() {
+  public ngOnChanges(changes: SimpleChanges) {
+    if (changes.schema) {
+      this.buildSchemanView();
+    }
+    /*
     if (!!this.schemaView?.properties) {
       Object.keys(this.schemaView.properties).forEach((key) => {
         if (
@@ -242,7 +271,7 @@ export class EditableJsonSchemaFormComponent
           this.entity[key] = {};
         }
       });
-    }
+    }*/
   }
 
   public openModal(template: TemplateRef<any>) {
@@ -250,33 +279,76 @@ export class EditableJsonSchemaFormComponent
     this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
   }
 
-  protected addCustomInput(key: string, inputLayoutProperty) {
+  protected constructLayout(key: string, properties, inputLayoutProperty) {
+    for (const subKey of Object.keys(properties)) {
+      // await this.addDynamicOptions(key);
+      this.addCustomInput(
+        key + subKey,
+        properties[subKey],
+        inputLayoutProperty
+      );
+      if (properties[subKey].properties) {
+        this.constructLayout(
+          key + subKey + '.',
+          properties[subKey].properties,
+          inputLayoutProperty
+        );
+      } else if (
+        properties[subKey].items &&
+        properties[subKey].items.properties
+      ) {
+        this.constructLayout(
+          key + subKey + '[].',
+          properties[subKey].items.properties,
+          inputLayoutProperty
+        );
+        inputLayoutProperty[key + subKey].items = Object.keys(
+          properties[subKey].items.properties
+        ).map((subSubKey) => key + subKey + '[].' + subSubKey);
+        inputLayoutProperty[key + subKey].startEmpty = true;
+      } else if (
+        properties[subKey].items &&
+        properties[subKey].items.enum &&
+        0 === properties[subKey].items.enum.length
+      ) {
+        delete properties[subKey];
+      } else if (properties[subKey].items) {
+        this.addCustomInput(
+          key + subKey + '[]', //"/selectedImages/-"
+          properties[subKey].items,
+          inputLayoutProperty
+        );
+        inputLayoutProperty[key + subKey].items = [key + subKey + '[]'];
+        inputLayoutProperty[key + subKey].startEmpty = true;
+      }
+    }
+  }
+
+  protected addCustomInput(key: string, property, inputLayoutProperty) {
     if (!inputLayoutProperty[key]) {
-      inputLayoutProperty[key] = { key };
+      inputLayoutProperty[key] = {
+        key,
+        type:
+          'string' === property.type
+            ? 'text'
+            : 'object' === property.type
+            ? 'section'
+            : property.type,
+      };
     }
     const type =
-      this.schema.properties[key].type +
+      property.type +
       '_' +
-      (this.schema.properties[key]['x-schema-form'] &&
-        this.schema.properties[key]['x-schema-form'].type);
+      (property['x-schema-form'] && property['x-schema-form'].type);
     if (type in CUSTOM_INPUT_PROPERTY) {
-      this.schemaView.properties[key].type = CUSTOM_INPUT_PROPERTY[type].type;
-      this.schemaEdit.properties[key].type = CUSTOM_INPUT_PROPERTY[type].type;
-      if (!this.schemaView.properties[key]['x-schema-form']) {
-        this.schemaView.properties[key]['x-schema-form'] = {};
+      property.type = CUSTOM_INPUT_PROPERTY[type].type;
+      if (!property['x-schema-form']) {
+        property['x-schema-form'] = {};
       }
-      this.schemaView.properties[key]['x-schema-form'].type =
-        CUSTOM_INPUT_PROPERTY[type]['x-schema-form-type'];
-      if (!this.schemaEdit.properties[key]['x-schema-form']) {
-        this.schemaEdit.properties[key]['x-schema-form'] = {};
-      }
-      this.schemaEdit.properties[key]['x-schema-form'].type =
+      property['x-schema-form'].type =
         CUSTOM_INPUT_PROPERTY[type]['x-schema-form-type'];
       if (CUSTOM_INPUT_PROPERTY[type].properties) {
-        this.schemaView.properties[key].properties =
-          CUSTOM_INPUT_PROPERTY[type].properties;
-        this.schemaEdit.properties[key].properties =
-          CUSTOM_INPUT_PROPERTY[type].properties;
+        property.properties = CUSTOM_INPUT_PROPERTY[type].properties;
       }
       if (CUSTOM_INPUT_PROPERTY[type].validator) {
         inputLayoutProperty[key].validator = inputLayoutProperty[key].validator
@@ -287,6 +359,7 @@ export class EditableJsonSchemaFormComponent
           : CUSTOM_INPUT_PROPERTY[type].validator;
         this.validators[key] = inputLayoutProperty[key].validator;
       }
+
       if (CUSTOM_INPUT_PROPERTY[type].fieldHtmlClass) {
         inputLayoutProperty[key].fieldHtmlClass =
           CUSTOM_INPUT_PROPERTY[type].fieldHtmlClass +
@@ -294,6 +367,7 @@ export class EditableJsonSchemaFormComponent
             ? ' ' + inputLayoutProperty[key].fieldHtmlClass
             : '');
       }
+
       if (CUSTOM_INPUT_PROPERTY[type].validationMessages) {
         inputLayoutProperty[key].validationMessages = inputLayoutProperty[key]
           .validationMessages
@@ -445,33 +519,74 @@ export class EditableJsonSchemaFormComponent
   }
 
   public onChange(properties) {
-    Object.keys(this.schemaEdit.properties).forEach((key) => {
-      if (
-        'oneOf' in this.schemaEdit.properties[key] &&
-        'null' === properties[key] &&
-        !_.find(this.schemaEdit.properties[key].oneOf, (oneOf) => {
-          return oneOf.enum && 'null' === oneOf.enum[0];
-        })
-      ) {
-        delete properties[key];
-      }
-      if (!(key in properties)) {
-        let value =
-          'default' in this.schemaEdit.properties[key]
-            ? this.schemaEdit.properties[key].default
-            : null;
-        if (key in this.propertyAdapters) {
-          value = this.propertyAdapters[key].before(value);
+    if (properties) {
+      Object.keys(this.schemaEdit.properties).forEach((key) => {
+        if (
+          'oneOf' in this.schemaEdit.properties[key] &&
+          'null' === properties[key] &&
+          !_.find(this.schemaEdit.properties[key].oneOf, (oneOf) => {
+            return oneOf.enum && 'null' === oneOf.enum[0];
+          })
+        ) {
+          delete properties[key];
         }
-        properties[key] = value;
-      }
-    });
+        if (!(key in properties)) {
+          let value =
+            'default' in this.schemaEdit.properties[key]
+              ? this.schemaEdit.properties[key].default
+              : null;
+          if (key in this.propertyAdapters) {
+            value = this.propertyAdapters[key].before(value);
+          }
+          properties[key] = value;
+        }
+      });
 
-    this.changedValue = properties;
-    this.isValid = this._isValid;
+      this.changedValue = properties;
+      this.isValid = this._isValid;
+    }
   }
   public onSubmit(properties) {
     this.onChange(properties);
     this.saveEditMode();
+  }
+
+  public openMethod(method: {
+    methodName: string;
+    methodId: string;
+    parameters: IJsonSchema;
+    actionName: string;
+  }) {
+    //    this.libEditableForm.beginAction()
+    this.currentMethodParameters = {};
+    this.methodError = '';
+    this.currentMethod = method;
+  }
+
+  public onMethodParametersChange(parameters) {
+    this.currentMethodParameters = parameters;
+  }
+  public onMethodParametersSubmit(parameters) {
+    this.onMethodParametersChange(parameters);
+    this.runMethod();
+  }
+
+  public cancelMethod() {
+    this.actionEditableForm.first.cancelEditMode();
+    this.methodError = '';
+    this.currentMethod = undefined;
+  }
+  public async runMethod() {
+    if (this.runAction) {
+      try {
+        await this.runAction(this.currentMethod, this.currentMethodParameters);
+      } catch (error) {
+        this.methodError = error.message ? error.message : 'Unexpected error';
+        return;
+      }
+    }
+    this.actionEditableForm.first.saveEditMode();
+    this.methodError = '';
+    this.currentMethod = undefined;
   }
 }

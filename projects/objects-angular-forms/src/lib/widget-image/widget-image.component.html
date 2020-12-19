@@ -14,7 +14,7 @@
       type="text"
       readonly
       class="col form-control-plaintext"
-      [value]="name ? name : 'No file selected'"
+      [value]="name ? name : 'No image selected'"
     />
     <div class="mx-3 w-100" *ngIf="!readonly && !img">
       <div class="custom-file">
@@ -30,7 +30,7 @@
           (change)="handleFileInput($event.target.files)"
         />
         <label class="custom-file-label" for="{{ 'inside' + layoutNode?._id }}"
-          >Choose file</label
+          >Choose image</label
         >
       </div>
     </div>

@@ -1,4 +1,5 @@
-import { WidgetArrayComponent } from './widget-array/widget-array.component';
+import { WidgetImagesComponent } from './widget-images/widget-images.component';
+import { WidgetImageComponent } from './widget-image/widget-image.component';
 import { WidgetFileComponent } from './widget-file/widget-file.component';
 import { Injectable } from '@angular/core';
 import { WidgetLibraryService } from 'angular6-json-schema-form';
@@ -27,7 +28,10 @@ export class EditableFormService {
   constructor(private widgetLibrary: WidgetLibraryService) {
     widgetLibrary.registerWidget('file-url', WidgetFileComponent);
     widgetLibrary.registerWidget('file', WidgetFileComponent);
-    widgetLibrary.registerWidget('array', WidgetArrayComponent);
+    widgetLibrary.registerWidget('image', WidgetImageComponent);
+    widgetLibrary.registerWidget('images', WidgetImagesComponent);
+    //  widgetLibrary.registerWidget('array', WidgetArrayComponent);
+    // widgetLibrary.registerWidget('object', WidgetObjectComponent);
   }
 
   public regsterWidgetValue(value: any) {

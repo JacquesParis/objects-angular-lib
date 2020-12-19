@@ -26,6 +26,8 @@ export interface IJsonLayoutProperty {
   destroyStrategy?: string;
   validator?: ValidatorFn;
   arrayItems?: IJsonSchema;
+
+  [key: string]: any;
 }
 
 export type IJsonLayout = (string | IJsonLayoutProperty)[];

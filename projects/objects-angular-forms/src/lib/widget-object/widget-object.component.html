@@ -1,0 +1,10 @@
+<div>
+  <json-schema-form
+    [schema]="itemSchema"
+    framework="bootstrap-4"
+    [data]="model"
+    [layout]="itemLayout"
+    (onSubmit)="itemChanged($event)"
+    (onChanges)="itemChanged($event)"
+  ></json-schema-form>
+</div>

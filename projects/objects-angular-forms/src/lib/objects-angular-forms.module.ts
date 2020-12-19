@@ -1,5 +1,6 @@
-import { WidgetArrayComponent } from './widget-array/widget-array.component';
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { WidgetImagesComponent } from './widget-images/widget-images.component';
+import { WidgetImageComponent } from './widget-image/widget-image.component';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EditableFormDirective } from './editable-form.directive';
 import { EditableInputComponent } from './editable-input/editable-input.component';
@@ -23,7 +24,8 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     EditableJsonSchemaFormComponent,
     EditableFileComponent,
     WidgetFileComponent,
-    WidgetArrayComponent,
+    WidgetImageComponent,
+    WidgetImagesComponent,
   ],
   imports: [
     CommonModule,
@@ -41,7 +43,8 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     EditableJsonSchemaFormComponent,
     EditableFileComponent,
     WidgetFileComponent,
-    WidgetArrayComponent,
+    WidgetImageComponent,
+    WidgetImagesComponent,
   ],
 })
 export class ObjectsAngularFormsModule {

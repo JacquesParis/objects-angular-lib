@@ -1,16 +1,16 @@
-import { EditableFormDirective } from './../editable-form.directive';
-import { EditableFormService } from './../editable-form.service';
+import { EditableFormDirective } from '../editable-form.directive';
+import { EditableFormService } from '../editable-form.service';
 import { JsonSchemaFormService } from 'angular6-json-schema-form';
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'file-widget',
-  templateUrl: './widget-file.component.html',
-  styleUrls: ['./widget-file.component.scss'],
+  selector: 'image-widget',
+  templateUrl: './widget-image.component.html',
+  styleUrls: ['./widget-image.component.scss'],
 })
-export class WidgetFileComponent implements OnInit {
+export class WidgetImageComponent implements OnInit {
   formControl: AbstractControl;
   controlName: string;
   controlValue: {

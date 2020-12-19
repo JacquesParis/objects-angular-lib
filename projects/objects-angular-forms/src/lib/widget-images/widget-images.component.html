@@ -8,29 +8,30 @@
   ></label>
 
   <div class="input-group border align-items-center py-3">
-    <img *ngIf="!!img" [src]="img" class="input-group-prepend loadedImg col" />
     <input
-      *ngIf="readonly"
+      *ngIf="readonly && 0 === imgs.length"
       type="text"
       readonly
       class="col form-control-plaintext"
-      [value]="name ? name : 'No file selected'"
+      [value]="'No image selected'"
     />
-    <div class="mx-3 w-100" *ngIf="!readonly && !img">
+    <div class="mx-3 w-100" *ngIf="!readonly">
       <div class="custom-file">
         <input
           type="file"
+          #inputFiles
           class="custom-file-input"
           [attr.list]="'control' + layoutNode?._id + 'Autocomplete'"
           [attr.placeholder]="options?.placeholder"
           [attr.required]="options?.required"
+          multiple
           [disabled]="controlDisabled"
           id="{{ 'inside' + layoutNode?._id }}"
           [readonly]="options?.readonly ? 'readonly' : null"
           (change)="handleFileInput($event.target.files)"
         />
         <label class="custom-file-label" for="{{ 'inside' + layoutNode?._id }}"
-          >Choose file</label
+          >Choose image</label
         >
       </div>
     </div>
@@ -62,12 +63,42 @@
         name ? name : "Choose file..."
       }}</label>
     </div>-->
-    <div class="input-group-apend" *ngIf="!!img && !readonly">
-      <i-bs
-        name="trash"
-        class="btn btn-outline-danger mr-3 border-0"
-        (click)="remove()"
-      ></i-bs>
+  </div>
+  <div>
+    <div class="container">
+      <div class="row mt-2">
+        <div
+          class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 px-1 px-1"
+          *ngFor="let img of imgs; let index = index"
+        >
+          <div class="card">
+            <img *ngIf="!!img" class="card-img-top" [src]="img" />
+            <div class="card-body px-2 pt-1 pb-0 position-relative">
+              <div class="close" *ngIf="!!img && !readonly">
+                <i-bs
+                  name="trash"
+                  class="btn btn-outline-danger border-0"
+                  (click)="remove(index)"
+                ></i-bs>
+              </div>
+              <form>
+                <div class="form-group">
+                  <label for="name{{ index }}">Name</label>
+                  <input
+                    type="email"
+                    [style.font-size]="'x-small'"
+                    class="form-control p-1"
+                    [ngModel]="getName(index)"
+                    id="name{{ index }}"
+                    name="name"
+                    (ngModelChange)="changeName(index, $event)"
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
