@@ -2,7 +2,13 @@
   display: none;
 }
 ::ng-deep {
-  textarea-widget > div > textarea {
-    height: 300px;
+  textarea-widget,
+  app-widget-object {
+    & > div > textarea {
+      height: 300px;
+    }
+  }
+  .legend {
+    display: none;
   }
 }

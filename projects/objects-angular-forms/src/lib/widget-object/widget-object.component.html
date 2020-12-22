@@ -1,10 +1,26 @@
-<div>
-  <json-schema-form
-    [schema]="itemSchema"
-    framework="bootstrap-4"
-    [data]="model"
-    [layout]="itemLayout"
-    (onSubmit)="itemChanged($event)"
-    (onChanges)="itemChanged($event)"
-  ></json-schema-form>
+<div [class]="options?.htmlClass || 'textarea-widget'">
+  <label
+    *ngIf="options?.title"
+    [attr.for]="'control' + layoutNode?._id"
+    [class]="options?.labelHtmlClass || ''"
+    [style.display]="options?.notitle ? 'none' : ''"
+    [innerHTML]="options?.title"
+  ></label>
+  <textarea
+    [attr.aria-describedby]="'control' + layoutNode?._id + 'Status'"
+    [attr.maxlength]="options?.maxLength"
+    [attr.minlength]="options?.minLength"
+    [attr.pattern]="options?.pattern"
+    [attr.placeholder]="options?.placeholder"
+    [attr.readonly]="options?.readonly ? 'readonly' : null"
+    [attr.required]="options?.required"
+    [class]="options?.fieldHtmlClass || ''"
+    [disabled]="controlDisabled"
+    [id]="'control' + layoutNode?._id"
+    [name]="controlName"
+    [value]="controlValue"
+    (input)="updateValue($event)"
+    (focusout)="lostFocus($event)"
+    >{{ controlValue }}</textarea
+  >
 </div>

@@ -16,48 +16,40 @@ import { Component, OnInit, Input } from '@angular/core';
 export class WidgetObjectComponent implements OnInit {
   formControl: AbstractControl;
   controlName: string;
-  controlValue: {
-    base64?: string;
-    size?: string;
-    name?: string;
-    type?: string;
-    id?: string;
-    uri?: string;
-  };
+  controlValue: string;
+  controlValueText: string = '';
   controlDisabled = false;
   boundControl = false;
   options: any;
   @Input() layoutNode: any;
   @Input() layoutIndex: number[];
   @Input() dataIndex: number[];
-  itemSchema: IJsonSchema;
-  itemLayout: IJsonLayout = [];
-  model: any;
-  constructor(
-    private jsf: JsonSchemaFormService,
-    public editableFormDirective: EditableFormDirective
-  ) {}
+  currentValue: string;
+
+  constructor(private jsf: JsonSchemaFormService) {}
 
   ngOnInit() {
     this.options = this.layoutNode.options || {};
-    this.itemSchema = this.options;
-    this.itemLayout = Object.keys(this.options.properties).map((key) => {
-      const layout: IJsonLayoutProperty = { key };
-      if ('array' === this.options?.arrayItems?.properties[key].type) {
-        layout.arrayItems = this.options?.arrayItems?.properties[key].items;
-      }
-      return layout;
-    });
-
-    this.itemLayout.push({
-      type: 'submit',
-      title: 'OK',
-      condition: 'false',
-    });
+    this.currentValue = this.controlValue;
     this.jsf.initializeControl(this);
-    this.model = this.controlValue;
   }
-  itemChanged(value) {
-    this.jsf.updateValue(this, value);
+
+  lostFocus(event) {
+    if (this.currentValue && this.currentValue !== this.controlValue) {
+      this.controlValue = this.currentValue;
+    }
+  }
+
+  updateValue(event) {
+    try {
+      this.currentValue = JSON.stringify(
+        JSON.parse(event.target.value),
+        undefined,
+        2
+      );
+      if (this.formControl.value !== this.currentValue) {
+        this.jsf.updateValue(this, this.currentValue);
+      }
+    } catch (error) {}
   }
 }

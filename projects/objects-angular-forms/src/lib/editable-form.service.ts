@@ -1,3 +1,4 @@
+import { WidgetObjectComponent } from './widget-object/widget-object.component';
 import { WidgetImagesComponent } from './widget-images/widget-images.component';
 import { WidgetImageComponent } from './widget-image/widget-image.component';
 import { WidgetFileComponent } from './widget-file/widget-file.component';
@@ -30,6 +31,7 @@ export class EditableFormService {
     widgetLibrary.registerWidget('file', WidgetFileComponent);
     widgetLibrary.registerWidget('image', WidgetImageComponent);
     widgetLibrary.registerWidget('images', WidgetImagesComponent);
+    widgetLibrary.registerWidget('json', WidgetObjectComponent);
     //  widgetLibrary.registerWidget('array', WidgetArrayComponent);
     // widgetLibrary.registerWidget('object', WidgetObjectComponent);
   }

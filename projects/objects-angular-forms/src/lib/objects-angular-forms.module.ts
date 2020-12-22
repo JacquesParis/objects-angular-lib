@@ -1,3 +1,4 @@
+import { WidgetObjectComponent } from './widget-object/widget-object.component';
 import { WidgetImagesComponent } from './widget-images/widget-images.component';
 import { WidgetImageComponent } from './widget-image/widget-image.component';
 import { NgModule } from '@angular/core';
@@ -26,6 +27,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     WidgetFileComponent,
     WidgetImageComponent,
     WidgetImagesComponent,
+    WidgetObjectComponent,
   ],
   imports: [
     CommonModule,
@@ -45,6 +47,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     WidgetFileComponent,
     WidgetImageComponent,
     WidgetImagesComponent,
+    WidgetObjectComponent,
   ],
 })
 export class ObjectsAngularFormsModule {
