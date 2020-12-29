@@ -1,5 +1,3 @@
-import { EditableFormDirective } from '../editable-form.directive';
-import { EditableFormService } from '../editable-form.service';
 import { JsonSchemaFormService } from 'angular6-json-schema-form';
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
@@ -45,7 +43,6 @@ export class WidgetImageComponent implements OnInit {
   }
   constructor(
     private jsf: JsonSchemaFormService,
-    public editableFormDirective: EditableFormDirective,
     private sanitization: DomSanitizer
   ) {}
 

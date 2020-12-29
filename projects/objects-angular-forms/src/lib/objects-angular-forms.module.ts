@@ -49,6 +49,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     WidgetImagesComponent,
     WidgetObjectComponent,
   ],
+  entryComponents: [EditableJsonSchemaFormComponent],
 })
 export class ObjectsAngularFormsModule {
   construtor() {}

@@ -53,6 +53,10 @@ export class EditableJsonSchemaFormComponent
     parameters: IJsonSchema;
     actionName: string;
   }[] = [];
+  @Input() crud: { delete: boolean; update: boolean } = {
+    delete: true,
+    update: true,
+  };
   @Input() saveValue: (value) => Promise<void>;
   @Input() deleteValue: () => Promise<void>;
   @Input() runAction: (

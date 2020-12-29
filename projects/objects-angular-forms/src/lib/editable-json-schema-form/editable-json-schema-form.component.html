@@ -33,6 +33,7 @@
 
     <button
       class="btn mr-2 mt-2"
+      *ngIf="libEditableForm.isEditMode || crud.update"
       [class.btn-primary]="libEditableForm.isViewMode"
       [class.btn-secondary]="libEditableForm.isEditMode"
       [innerHTML]="libEditableForm.isEditMode ? 'Cancel' : 'Edit'"
@@ -52,7 +53,7 @@
       Save
     </button>
     <button
-      *ngIf="libEditableForm.isViewMode && deleteValue"
+      *ngIf="libEditableForm.isViewMode && deleteValue && crud.delete"
       type="button"
       class="btn mr-2 mt-2"
       (click)="openModal(confirmDelete)"
