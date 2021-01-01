@@ -59,15 +59,7 @@ export class EditableJsonSchemaFormComponent
   };
   @Input() saveValue: (value) => Promise<void>;
   @Input() deleteValue: () => Promise<void>;
-  @Input() runAction: (
-    method: {
-      methodName: string;
-      methodId: string;
-      parameters: IJsonSchema;
-      actionName: string;
-    },
-    args
-  ) => Promise<void>;
+  @Input() runAction: (methodId: string, args) => Promise<void>;
   // tslint:disable-next-line: no-output-on-prefix
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
@@ -248,6 +240,9 @@ export class EditableJsonSchemaFormComponent
     schema,
     jsonTransfrom: (value: any) => any
   ) {
+    if (undefined === value || null === value || !_.isObject(value)) {
+      return value;
+    }
     if (
       'json' === schema['x-schema-form-type'] ||
       (schema['x-schema-form'] && 'json' === schema['x-schema-form'].type)
@@ -416,7 +411,10 @@ export class EditableJsonSchemaFormComponent
   public async runMethod() {
     if (this.runAction) {
       try {
-        await this.runAction(this.currentMethod, this.currentMethodParameters);
+        await this.runAction(
+          this.currentMethod.methodId,
+          this.currentMethodParameters
+        );
       } catch (error) {
         this.methodError = error.message ? error.message : 'Unexpected error';
         return;
