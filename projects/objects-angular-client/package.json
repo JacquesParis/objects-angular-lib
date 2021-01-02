@@ -1,6 +1,6 @@
 {
   "name": "@jacquesparis/objects-angular-client",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "peerDependencies": {
     "@angular/common": "^9.1.1",
     "@angular/core": "^9.1.1",

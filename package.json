@@ -1,6 +1,6 @@
 {
   "name": "objects-angular-lib",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -12,7 +12,7 @@
     "watch": "ng build objects-angular-forms --watch",
     "dev": "npm uninstall @jacquesparis/objects-client && npm install --save-dev ../objects-client",
     "update": "npm uninstall @jacquesparis/objects-client && npm install --save-dev @jacquesparis/objects-client",
-    "lib": "npm run update && npm run build && git add -A && git commit -m \"lib\" && git push -f origin HEAD && npm publish dist/objects-angular-forms --access=public"
+    "lib": "npm run update && npm run build && git add -A && git commit --amend --no-edit && git push -f origin HEAD && npm publish dist/objects-angular-forms --access=public"
   },
   "private": true,
   "dependencies": {
@@ -36,9 +36,10 @@
     "@angular/platform-browser": "~9.1.0",
     "@angular/platform-browser-dynamic": "~9.1.0",
     "@angular/router": "~9.1.0",
-    "@jacquesparis/objects-client": "file:../objects-client",
+    "@jacquesparis/objects-client": "^1.0.18",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
+    "@types/leaflet": "^1.5.23",
     "@types/node": "^12.19.1",
     "angular6-json-schema-form": "^8.0.0",
     "codelyzer": "^5.1.2",
@@ -49,6 +50,7 @@
     "karma-coverage-istanbul-reporter": "~2.1.0",
     "karma-jasmine": "~3.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
+    "leaflet": "^1.7.1",
     "lodash-es": "^4.17.15",
     "moment": "^2.29.1",
     "ng-packagr": "^9.0.0",
@@ -60,8 +62,6 @@
     "tslib": "^1.10.0",
     "tslint": "~6.1.0",
     "typescript": "~3.8.3",
-    "zone.js": "~0.10.2",
-    "@types/leaflet": "^1.5.23",
-    "leaflet": "^1.7.1"
+    "zone.js": "~0.10.2"
   }
 }
