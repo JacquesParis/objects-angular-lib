@@ -240,11 +240,11 @@ export class EditableJsonSchemaFormComponent
     schema,
     jsonTransfrom: (value: any) => any
   ) {
-    if (undefined === value || null === value || !_.isObject(value)) {
+    if (undefined === value || null === value) {
       return value;
     }
     if (
-      'json' === schema['x-schema-form-type'] ||
+      (_.isString(value) && 'json' === schema['x-schema-form-type']) ||
       (schema['x-schema-form'] && 'json' === schema['x-schema-form'].type)
     ) {
       try {
@@ -252,6 +252,8 @@ export class EditableJsonSchemaFormComponent
       } catch (error) {
         return '';
       }
+    } else if (!_.isObject(value)) {
+      return value;
     } else if (schema.properties) {
       for (const propertyKey of Object.keys(schema.properties)) {
         if (undefined !== value[propertyKey]) {

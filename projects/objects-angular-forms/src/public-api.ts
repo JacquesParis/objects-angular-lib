@@ -1,3 +1,4 @@
+import { CheckboxesComponent } from 'angular6-json-schema-form';
 /*
  * Public API Surface of objects-angular-forms
  */
@@ -16,3 +17,4 @@ export * from './lib/widget-file/widget-file.component';
 export * from './lib/widget-image/widget-image.component';
 export * from './lib/widget-images/widget-images.component';
 export * from './lib/widget-object/widget-object.component';
+export * from './lib/widget-checkboxes/widget-checkboxes.component';

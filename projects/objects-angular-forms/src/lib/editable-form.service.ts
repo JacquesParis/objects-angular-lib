@@ -1,9 +1,13 @@
+import { WidgetCheckboxesComponent } from './widget-checkboxes/widget-checkboxes.component';
 import { WidgetObjectComponent } from './widget-object/widget-object.component';
 import { WidgetImagesComponent } from './widget-images/widget-images.component';
 import { WidgetImageComponent } from './widget-image/widget-image.component';
 import { WidgetFileComponent } from './widget-file/widget-file.component';
 import { Injectable } from '@angular/core';
-import { WidgetLibraryService } from 'angular6-json-schema-form';
+import {
+  CheckboxesComponent,
+  WidgetLibraryService,
+} from 'angular6-json-schema-form';
 import * as _ from 'lodash-es';
 
 @Injectable({
@@ -32,6 +36,8 @@ export class EditableFormService {
     widgetLibrary.registerWidget('image', WidgetImageComponent);
     widgetLibrary.registerWidget('images', WidgetImagesComponent);
     widgetLibrary.registerWidget('json', WidgetObjectComponent);
+
+    widgetLibrary.registerWidget('checkboxes', WidgetCheckboxesComponent);
     //  widgetLibrary.registerWidget('array', WidgetArrayComponent);
     // widgetLibrary.registerWidget('object', WidgetObjectComponent);
   }
