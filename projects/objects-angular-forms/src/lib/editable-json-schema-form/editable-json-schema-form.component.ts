@@ -40,6 +40,8 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 })
 export class EditableJsonSchemaFormComponent
   implements OnInit, OnDestroy, AfterViewInit, OnChanges {
+  @Input() inputClass: string = 'form-control-sm';
+  @Input() inputReadClass: string = 'form-control-plaintext';
   @Input() schema: IJsonSchema;
   @Input() public layout: IJsonLayoutProperty[] = [];
   @Input() entity: {
@@ -208,6 +210,15 @@ export class EditableJsonSchemaFormComponent
   }
 
   transformJsonSchema(schema: IJsonSchema) {
+    if (!schema['x-schema-form']) {
+      schema['x-schema-form'] = {};
+    }
+    if (this.inputClass) {
+      schema['x-schema-form'].fieldHtmlClass =
+        (schema['x-schema-form'].fieldHtmlClass
+          ? schema['x-schema-form'].fieldHtmlClass + ' '
+          : '') + this.inputClass;
+    }
     if (
       'json' === schema['x-schema-form-type'] ||
       (schema['x-schema-form'] && 'json' === schema['x-schema-form'].type)
@@ -227,6 +238,16 @@ export class EditableJsonSchemaFormComponent
     schema.readOnly = true;
     schema.disabled = true;
     schema.htmlClass = 'form-group-plaintext';
+
+    if (!schema['x-schema-form']) {
+      schema['x-schema-form'] = {};
+    }
+    if (this.inputReadClass) {
+      schema['x-schema-form'].fieldHtmlClass =
+        (schema['x-schema-form'].fieldHtmlClass
+          ? schema['x-schema-form'].fieldHtmlClass + ' '
+          : '') + this.inputReadClass;
+    }
     if (schema.properties) {
       for (const propertyKey of Object.keys(schema.properties)) {
         this.makeViewReadOnly(schema.properties[propertyKey]);

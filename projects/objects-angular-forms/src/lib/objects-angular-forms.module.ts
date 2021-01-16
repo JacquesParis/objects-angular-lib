@@ -1,3 +1,4 @@
+import { WidgetTextareaComponent } from './widget-textarea/widget-textarea.component';
 import { WidgetCheckboxesComponent } from './widget-checkboxes/widget-checkboxes.component';
 import { WidgetObjectComponent } from './widget-object/widget-object.component';
 import { WidgetImagesComponent } from './widget-images/widget-images.component';
@@ -30,6 +31,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     WidgetImagesComponent,
     WidgetObjectComponent,
     WidgetCheckboxesComponent,
+    WidgetTextareaComponent,
   ],
   imports: [
     CommonModule,
@@ -51,6 +53,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     WidgetImagesComponent,
     WidgetObjectComponent,
     WidgetCheckboxesComponent,
+    WidgetTextareaComponent,
   ],
   entryComponents: [EditableJsonSchemaFormComponent],
 })

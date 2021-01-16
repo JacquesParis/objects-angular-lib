@@ -1,3 +1,4 @@
+import { WidgetTextareaComponent } from './widget-textarea/widget-textarea.component';
 import { WidgetCheckboxesComponent } from './widget-checkboxes/widget-checkboxes.component';
 import { WidgetObjectComponent } from './widget-object/widget-object.component';
 import { WidgetImagesComponent } from './widget-images/widget-images.component';
@@ -38,6 +39,7 @@ export class EditableFormService {
     widgetLibrary.registerWidget('json', WidgetObjectComponent);
 
     widgetLibrary.registerWidget('checkboxes', WidgetCheckboxesComponent);
+    widgetLibrary.registerWidget('textarea', WidgetTextareaComponent);
     //  widgetLibrary.registerWidget('array', WidgetArrayComponent);
     // widgetLibrary.registerWidget('object', WidgetObjectComponent);
   }

@@ -11,4 +11,9 @@
   .legend {
     display: none;
   }
+
+  .form-control-plaintext {
+    border-left: 1px #ccc solid;
+    padding-left: 0.5rem !important;
+  }
 }
