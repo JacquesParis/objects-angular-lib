@@ -11,12 +11,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import {
-  FormGroup,
-  Validators,
-  ValidatorFn,
-  AbstractControl,
-} from '@angular/forms';
+import { FormGroup, AbstractControl } from '@angular/forms';
 import {
   IJsonSchema,
   IJsonLayout,
@@ -26,8 +21,6 @@ import { EditableFormDirective } from '../editable-form.directive';
 import * as _ from 'lodash-es';
 import { QueryList, EventEmitter, OnDestroy } from '@angular/core';
 import { JsonSchemaFormComponent } from 'angular6-json-schema-form';
-import { JsonSchemaCustomType } from '../editable-abstract/i-json-schema';
-import { ValidationErrors } from '@angular/forms';
 import { EditableFormService } from '../editable-form.service';
 import { Subscription } from 'rxjs';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
