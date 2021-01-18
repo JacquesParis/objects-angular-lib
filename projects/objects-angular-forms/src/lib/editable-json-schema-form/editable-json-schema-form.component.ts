@@ -160,15 +160,23 @@ export class EditableJsonSchemaFormComponent
     });
   }
   async ngOnInit(): Promise<void> {
+    /*
     this.viewProperties = this.editionPropertiesCompleted;
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
-    this.isReady = true;
+    this.isReady = true;*/
   }
 
   public ngOnChanges(changes: SimpleChanges) {
     if (changes.schema) {
       this.buildSchemanView();
+      this.viewProperties = this.editionPropertiesCompleted;
+      this.editionProperties = this.editionPropertiesCompleted;
+      this.changedValue = this.editionPropertiesCompleted;
+      this.isReady = false;
+      window.setTimeout(() => {
+        this.isReady = true;
+      });
     }
   }
 
