@@ -160,23 +160,23 @@ export class EditableJsonSchemaFormComponent
     });
   }
   async ngOnInit(): Promise<void> {
-    /*
+    this.initSchema();
+  }
+
+  private initSchema() {
+    this.isReady = false;
+    this.buildSchemanView();
     this.viewProperties = this.editionPropertiesCompleted;
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
-    this.isReady = true;*/
+    window.setTimeout(() => {
+      this.isReady = true;
+    });
   }
 
   public ngOnChanges(changes: SimpleChanges) {
-    if (changes.schema) {
-      this.buildSchemanView();
-      this.viewProperties = this.editionPropertiesCompleted;
-      this.editionProperties = this.editionPropertiesCompleted;
-      this.changedValue = this.editionPropertiesCompleted;
-      this.isReady = false;
-      window.setTimeout(() => {
-        this.isReady = true;
-      });
+    if (this.isReady) {
+      this.initSchema();
     }
   }
 
@@ -444,7 +444,6 @@ export class EditableJsonSchemaFormComponent
         return;
       }
     }
-    this.actionEditableForm.first.saveEditMode();
     this.methodError = '';
     this.currentMethod = undefined;
   }
