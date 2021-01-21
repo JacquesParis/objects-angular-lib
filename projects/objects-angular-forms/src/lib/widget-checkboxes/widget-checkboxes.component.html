@@ -53,7 +53,9 @@
       [value]="checkboxItem.value"
       (change)="updateValue($event)"
     />
-    <span [innerHTML]="checkboxItem.name"></span>
+    <span
+      [innerHTML]="sanitization.bypassSecurityTrustHtml(checkboxItem.name)"
+    ></span>
   </label>
 </div>
 <!-- 'vertical' = regular checkboxes -->
@@ -87,7 +89,9 @@
         [value]="checkboxItem.value"
         (change)="updateValue($event)"
       />
-      <span [innerHTML]="checkboxItem?.name"></span>
+      <span
+        [innerHTML]="sanitization.bypassSecurityTrustHtml(checkboxItem.name)"
+      ></span>
     </label>
   </div>
 </div>

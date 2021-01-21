@@ -4,6 +4,7 @@ import { AbstractControl, FormArray } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { isArray, cloneDeep } from 'lodash-es';
 
+declare var showImg;
 @Component({
   selector: 'images-widget',
   templateUrl: './widget-images.component.html',
@@ -30,6 +31,10 @@ export class WidgetImagesComponent implements OnInit {
 
   readonly: boolean;
   itemFormControl: AbstractControl;
+
+  runShowImg(index: number) {
+    showImg(this.controlValue[index]);
+  }
 
   public get imgs(): SafeResourceUrl[] {
     return isArray(this.controlValue)

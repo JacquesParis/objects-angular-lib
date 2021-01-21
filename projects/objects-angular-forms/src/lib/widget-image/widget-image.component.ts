@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 
+declare var showImg;
 @Component({
   selector: 'image-widget',
   templateUrl: './widget-image.component.html',
@@ -26,7 +27,14 @@ export class WidgetImageComponent implements OnInit {
   @Input() layoutIndex: number[];
   @Input() dataIndex: number[];
   readonly: boolean;
+  constructor(
+    private jsf: JsonSchemaFormService,
+    private sanitization: DomSanitizer
+  ) {}
 
+  runShowImg() {
+    showImg(this.controlValue);
+  }
   public get img() {
     return this.controlValue?.base64 && this.controlValue?.type
       ? this.sanitization.bypassSecurityTrustResourceUrl(
@@ -41,10 +49,6 @@ export class WidgetImageComponent implements OnInit {
   public get name() {
     return this.controlValue?.name;
   }
-  constructor(
-    private jsf: JsonSchemaFormService,
-    private sanitization: DomSanitizer
-  ) {}
 
   ngOnInit() {
     this.options = this.layoutNode.options || {};

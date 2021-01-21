@@ -44,7 +44,12 @@
           *ngFor="let img of imgs; let index = index"
         >
           <div class="card">
-            <img *ngIf="!!img" class="card-img-top" [src]="img" />
+            <img
+              *ngIf="!!img"
+              class="card-img-top"
+              [src]="img"
+              (click)="runShowImg(index)"
+            />
             <div class="card-body px-2 pt-1 pb-0 position-relative">
               <div class="close" *ngIf="!!img && !readonly">
                 <i-bs

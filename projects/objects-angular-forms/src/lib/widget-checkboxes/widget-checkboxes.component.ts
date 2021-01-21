@@ -1,3 +1,4 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { AbstractControl } from '@angular/forms';
 import {
   buildTitleMap,
@@ -13,7 +14,10 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./widget-checkboxes.component.scss'],
 })
 export class WidgetCheckboxesComponent extends CheckboxesComponent {
-  constructor(protected jsonSchemaFormService: JsonSchemaFormService) {
+  constructor(
+    protected jsonSchemaFormService: JsonSchemaFormService,
+    public sanitization: DomSanitizer
+  ) {
     super(jsonSchemaFormService);
   }
   deselect() {
