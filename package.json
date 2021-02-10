@@ -47,6 +47,7 @@
     "karma-jasmine": "~3.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
     "lodash-es": "^4.17.15",
+    "moment": "^2.29.1",
     "ng-packagr": "^9.0.0",
     "ngx-bootstrap": "^6.1.0",
     "ngx-bootstrap-icons": "^1.2.1",

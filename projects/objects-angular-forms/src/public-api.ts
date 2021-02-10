@@ -19,3 +19,4 @@ export * from './lib/widget-images/widget-images.component';
 export * from './lib/widget-object/widget-object.component';
 export * from './lib/widget-checkboxes/widget-checkboxes.component';
 export * from './lib/widget-textarea/widget-textarea.component';
+export * from './lib/widget-date-range/widget-date-range.component';

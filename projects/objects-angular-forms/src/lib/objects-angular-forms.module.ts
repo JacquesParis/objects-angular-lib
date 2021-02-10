@@ -1,3 +1,4 @@
+import { WidgetDateRangeComponent } from './widget-date-range/widget-date-range.component';
 import { WidgetTextareaComponent } from './widget-textarea/widget-textarea.component';
 import { WidgetCheckboxesComponent } from './widget-checkboxes/widget-checkboxes.component';
 import { WidgetObjectComponent } from './widget-object/widget-object.component';
@@ -16,6 +17,8 @@ import { Bootstrap4FrameworkModule } from 'angular6-json-schema-form';
 import { EditableFileComponent } from './editable-file/editable-file.component';
 import { WidgetFileComponent } from './widget-file/widget-file.component';
 import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
+// RECOMMENDED
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @NgModule({
   declarations: [
@@ -32,6 +35,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     WidgetObjectComponent,
     WidgetCheckboxesComponent,
     WidgetTextareaComponent,
+    WidgetDateRangeComponent,
   ],
   imports: [
     CommonModule,
@@ -39,6 +43,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     Bootstrap4FrameworkModule,
     ReactiveFormsModule,
     NgxBootstrapIconsModule,
+    BsDatepickerModule,
   ],
   exports: [
     EditableInputComponent,
@@ -54,9 +59,10 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
     WidgetObjectComponent,
     WidgetCheckboxesComponent,
     WidgetTextareaComponent,
+    WidgetDateRangeComponent,
   ],
   entryComponents: [EditableJsonSchemaFormComponent],
 })
 export class ObjectsAngularFormsModule {
-  construtor() {}
+  constructor() {}
 }

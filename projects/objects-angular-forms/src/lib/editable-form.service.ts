@@ -1,3 +1,4 @@
+import { WidgetDateRangeComponent } from './widget-date-range/widget-date-range.component';
 import { WidgetTextareaComponent } from './widget-textarea/widget-textarea.component';
 import { WidgetCheckboxesComponent } from './widget-checkboxes/widget-checkboxes.component';
 import { WidgetObjectComponent } from './widget-object/widget-object.component';
@@ -40,11 +41,12 @@ export class EditableFormService {
 
     widgetLibrary.registerWidget('checkboxes', WidgetCheckboxesComponent);
     widgetLibrary.registerWidget('textarea', WidgetTextareaComponent);
+    widgetLibrary.registerWidget('date-range', WidgetDateRangeComponent);
     //  widgetLibrary.registerWidget('array', WidgetArrayComponent);
     // widgetLibrary.registerWidget('object', WidgetObjectComponent);
   }
 
-  public regsterWidgetValue(value: any) {
+  public registerWidgetValue(value: any) {
     const id = 'widget$$' + Math.ceil(Math.random() * 1000000000000000);
     this.widgetValues[id] = value;
     return id;

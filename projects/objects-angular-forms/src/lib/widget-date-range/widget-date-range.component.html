@@ -1,0 +1,46 @@
+<div [class]="options?.htmlClass || ''">
+  <label
+    *ngIf="options?.title"
+    [attr.for]="'control' + layoutNode?._id"
+    [class]="options?.labelHtmlClass || ''"
+    [style.display]="options?.notitle ? 'none' : ''"
+    [innerHTML]="options?.title"
+  ></label>
+
+  <div class="row">
+    <div class="col-12 col-sm-5 col-md-5 col-lg-4 col-xl-3">
+      <input
+        [id]="'control' + layoutNode?._id"
+        [attr.aria-describedby]="'control' + layoutNode?._id + 'Status'"
+        [attr.list]="'control' + layoutNode?._id + 'Autocomplete'"
+        [name]="controlName"
+        class="form-control"
+        #drp="bsDaterangepicker"
+        [class]="options?.fieldHtmlClass || ''"
+        [disabled]="controlDisabled"
+        bsDaterangepicker
+        [(ngModel)]="bsRangeValue"
+        (ngModelChange)="updateValue($event)"
+        [readOnly]="options?.readonly"
+        [attr.placeholder]="options?.placeholder"
+        [attr.required]="options?.required"
+        [bsConfig]="{
+          containerClass: 'theme-default'
+        }"
+      />
+    </div>
+    <div
+      class="col-12 col-sm-7 col-md-7 col-lg-8 col-xl-9 mt-2 mt-sm-0"
+      *ngIf="!options?.readonly"
+    >
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        (click)="drp.toggle()"
+        [attr.aria-expanded]="drp.isOpen"
+        type="button"
+      >
+        Date Range Picker
+      </button>
+    </div>
+  </div>
+</div>
