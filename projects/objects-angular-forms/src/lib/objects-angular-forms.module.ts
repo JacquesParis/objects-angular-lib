@@ -1,3 +1,4 @@
+import { WidgetPositionComponent } from './widget-position/widget-position.component';
 import { WidgetDateRangeComponent } from './widget-date-range/widget-date-range.component';
 import { WidgetTextareaComponent } from './widget-textarea/widget-textarea.component';
 import { WidgetCheckboxesComponent } from './widget-checkboxes/widget-checkboxes.component';
@@ -36,6 +37,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     WidgetCheckboxesComponent,
     WidgetTextareaComponent,
     WidgetDateRangeComponent,
+    WidgetPositionComponent,
   ],
   imports: [
     CommonModule,
@@ -60,6 +62,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     WidgetCheckboxesComponent,
     WidgetTextareaComponent,
     WidgetDateRangeComponent,
+    WidgetPositionComponent,
   ],
   entryComponents: [EditableJsonSchemaFormComponent],
 })

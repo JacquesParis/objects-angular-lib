@@ -1,0 +1,67 @@
+<div [class]="options?.htmlClass || ''">
+  <label
+    *ngIf="options?.title"
+    [attr.for]="'control' + layoutNode?._id"
+    [class]="options?.labelHtmlClass || ''"
+    [style.display]="options?.notitle ? 'none' : ''"
+    [innerHTML]="options?.title"
+  ></label>
+
+  <div class="row">
+    <div
+      class="ml-md-3 col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6 pr-0"
+      style="font-size: small"
+      *ngIf="marker"
+    >
+      {{ currentValue }}
+      <i-bs
+        name="trash"
+        *ngIf="!options?.readonly"
+        class="btn btn-outline-danger border-0 px-1 py-0"
+        (click)="remove()"
+      ></i-bs>
+      <i-bs
+        name="pencil"
+        *ngIf="!options?.readonly"
+        (click)="openModal(template)"
+        class="btn btn-outline-success border-0 px-1 py-0"
+      ></i-bs>
+    </div>
+    <div
+      class="ml-md-3 col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6"
+      [style.height]="'200px'"
+      [hidden]="hideMap"
+      [id]="'control' + layoutNode?._id"
+    ></div>
+    <div
+      class="ml-md-3 col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6"
+      style="font-size: small"
+      *ngIf="!marker"
+    >
+      No position defined
+      <i-bs
+        name="pencil"
+        *ngIf="!options?.readonly"
+        (click)="openModal(template)"
+        class="btn btn-outline-success border-0 px-1 py-0"
+      ></i-bs>
+    </div>
+  </div>
+</div>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Center on position</h4>
+    <div class="pull-right">
+      <i
+        class="align-middle mr-3 fas fa-crosshairs fa-2x"
+        (click)="locate()"
+        *ngIf="hasGeoloc"
+      ></i>
+      <i class="align-middle fas fa-check fa-2x" (click)="modalRef.hide()"></i>
+    </div>
+  </div>
+  <div class="modal-body modalMap" [id]="'edit' + layoutNode?._id">
+    This is a modal.
+  </div>
+</ng-template>

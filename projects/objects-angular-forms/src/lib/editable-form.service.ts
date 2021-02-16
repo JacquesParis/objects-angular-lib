@@ -1,3 +1,4 @@
+import { WidgetPositionComponent } from './widget-position/widget-position.component';
 import { WidgetDateRangeComponent } from './widget-date-range/widget-date-range.component';
 import { WidgetTextareaComponent } from './widget-textarea/widget-textarea.component';
 import { WidgetCheckboxesComponent } from './widget-checkboxes/widget-checkboxes.component';
@@ -42,6 +43,7 @@ export class EditableFormService {
     widgetLibrary.registerWidget('checkboxes', WidgetCheckboxesComponent);
     widgetLibrary.registerWidget('textarea', WidgetTextareaComponent);
     widgetLibrary.registerWidget('date-range', WidgetDateRangeComponent);
+    widgetLibrary.registerWidget('position', WidgetPositionComponent);
     //  widgetLibrary.registerWidget('array', WidgetArrayComponent);
     // widgetLibrary.registerWidget('object', WidgetObjectComponent);
   }

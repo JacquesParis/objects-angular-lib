@@ -15,7 +15,10 @@
     "lib": "npm run update && npm run build && git add -A && git commit -m \"lib\" && git push -f origin HEAD && npm publish dist/objects-angular-forms --access=public"
   },
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "@types/leaflet": "^1.5.23",
+    "leaflet": "^1.7.1"
+  },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.901.0",
     "@angular-devkit/build-ng-packagr": "~0.901.1",
@@ -57,6 +60,8 @@
     "tslib": "^1.10.0",
     "tslint": "~6.1.0",
     "typescript": "~3.8.3",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.10.2",
+    "@types/leaflet": "^1.5.23",
+    "leaflet": "^1.7.1"
   }
 }
