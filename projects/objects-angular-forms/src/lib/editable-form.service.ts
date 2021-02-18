@@ -1,3 +1,4 @@
+import { WidgetIconComponent } from './widget-icon/widget-icon.component';
 import { WidgetPositionComponent } from './widget-position/widget-position.component';
 import { WidgetDateRangeComponent } from './widget-date-range/widget-date-range.component';
 import { WidgetTextareaComponent } from './widget-textarea/widget-textarea.component';
@@ -44,6 +45,7 @@ export class EditableFormService {
     widgetLibrary.registerWidget('textarea', WidgetTextareaComponent);
     widgetLibrary.registerWidget('date-range', WidgetDateRangeComponent);
     widgetLibrary.registerWidget('position', WidgetPositionComponent);
+    widgetLibrary.registerWidget('icon', WidgetIconComponent);
     //  widgetLibrary.registerWidget('array', WidgetArrayComponent);
     // widgetLibrary.registerWidget('object', WidgetObjectComponent);
   }
