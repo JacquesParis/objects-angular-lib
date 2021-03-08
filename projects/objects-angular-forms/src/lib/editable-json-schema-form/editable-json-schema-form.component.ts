@@ -47,6 +47,7 @@ export class EditableJsonSchemaFormComponent
     methodId: string;
     parameters: IJsonSchema;
     actionName: string;
+    handlebarsMethodSampling?: string;
   }[] = [];
   @Input() crud: { delete: boolean; update: boolean } = {
     delete: true,
@@ -54,7 +55,11 @@ export class EditableJsonSchemaFormComponent
   };
   @Input() saveValue: (value) => Promise<void>;
   @Input() deleteValue: () => Promise<void>;
-  @Input() runAction: (methodId: string, args) => Promise<void>;
+  @Input() runAction: (
+    methodId: string,
+    parameters: any,
+    methodSampling?: string
+  ) => Promise<void>;
   // tslint:disable-next-line: no-output-on-prefix
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
@@ -81,6 +86,7 @@ export class EditableJsonSchemaFormComponent
     methodId: string;
     parameters: IJsonSchema;
     actionName: string;
+    handlebarsMethodSampling?: string;
   };
   public currentMethodParameters: { [key: string]: any };
 
@@ -412,6 +418,7 @@ export class EditableJsonSchemaFormComponent
     methodId: string;
     parameters: IJsonSchema;
     actionName: string;
+    handlebarsMethodSampling?: string;
   }) {
     //    this.libEditableForm.beginAction()
     this.currentMethodParameters = {};
@@ -437,12 +444,16 @@ export class EditableJsonSchemaFormComponent
       try {
         await this.runAction(
           this.currentMethod.methodId,
-          this.currentMethodParameters
+          this.currentMethodParameters,
+          this.currentMethod.handlebarsMethodSampling
         );
       } catch (error) {
         this.methodError = error.message ? error.message : 'Unexpected error';
         return;
       }
+    }
+    if (this.actionEditableForm.first) {
+      this.actionEditableForm.first.cancelEditMode();
     }
     this.methodError = '';
     this.currentMethod = undefined;
