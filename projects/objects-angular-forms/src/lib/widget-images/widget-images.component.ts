@@ -1,3 +1,4 @@
+import { EditableFormService } from './../editable-form.service';
 import { JsonSchemaFormService } from 'angular6-json-schema-form';
 import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { AbstractControl, FormArray } from '@angular/forms';
@@ -50,7 +51,8 @@ export class WidgetImagesComponent implements OnInit {
 
   constructor(
     private jsf: JsonSchemaFormService,
-    private sanitization: DomSanitizer
+    private sanitization: DomSanitizer,
+    private editableFormService: EditableFormService
   ) {}
 
   ngOnInit() {
@@ -66,6 +68,10 @@ export class WidgetImagesComponent implements OnInit {
     }
 
     let fileIndex = 0;
+    for (fileIndex = 0; fileIndex < files.length; fileIndex++) {
+      this.editableFormService.initAction('read_image_' + fileIndex);
+    }
+    fileIndex = 0;
 
     const inputValue = isArray(this.controlValue)
       ? cloneDeep(
@@ -83,6 +89,7 @@ export class WidgetImagesComponent implements OnInit {
         id: null,
         uri: null,
       });
+      this.editableFormService.endAction('read_image_' + fileIndex);
       fileIndex++;
       if (fileIndex < files.length) {
         this.controlValue = inputValue;

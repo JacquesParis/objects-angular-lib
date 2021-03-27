@@ -14,15 +14,26 @@ import {
 } from 'angular6-json-schema-form';
 import * as _ from 'lodash-es';
 
+export interface IWaitingStateService {
+  initAction(id: string): void;
+  endAction(id: string): void;
+}
 @Injectable({
   providedIn: 'root',
 })
-export class EditableFormService {
+export class EditableFormService implements IWaitingStateService {
+  private waitingStateService: IWaitingStateService;
   // tslint:disable-next-line: variable-name
   protected _runningEditionForm: string = undefined;
   widgetValues: { [id: string]: any } = {};
   get hasARunningEdition(): boolean {
     return undefined !== this._runningEditionForm;
+  }
+
+  public registerWaitingStateService(
+    waitingStateService: IWaitingStateService
+  ) {
+    this.waitingStateService = waitingStateService;
   }
 
   public registerFormInEdition(formId: string) {
@@ -48,6 +59,16 @@ export class EditableFormService {
     widgetLibrary.registerWidget('icon', WidgetIconComponent);
     //  widgetLibrary.registerWidget('array', WidgetArrayComponent);
     // widgetLibrary.registerWidget('object', WidgetObjectComponent);
+  }
+  initAction(id: string): void {
+    if (this.waitingStateService) {
+      this.waitingStateService.initAction(id);
+    }
+  }
+  endAction(id: string): void {
+    if (this.waitingStateService) {
+      this.waitingStateService.endAction(id);
+    }
   }
 
   public registerWidgetValue(value: any) {
