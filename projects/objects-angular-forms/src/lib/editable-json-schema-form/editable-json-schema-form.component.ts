@@ -37,6 +37,11 @@ export class EditableJsonSchemaFormComponent
   @Input() inputReadClass: string = 'form-control-plaintext';
   @Input() schema: IJsonSchema;
   @Input() public layout: IJsonLayoutProperty[] = [];
+  @Input() public hides: {
+    methods?: boolean;
+    entity?: boolean;
+    commands?: boolean;
+  } = {};
   @Input() entity: {
     [key: string]: any;
     editionProperties: any;
@@ -62,6 +67,14 @@ export class EditableJsonSchemaFormComponent
   ) => Promise<void>;
   // tslint:disable-next-line: no-output-on-prefix
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
+  @Input() public currentMethod: {
+    methodName: string;
+    methodId: string;
+    parameters: IJsonSchema;
+    actionName: string;
+    handlebarsMethodSampling?: string;
+    icon?: string;
+  };
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
   @ViewChildren('editionFormQuery')
   editionFormQuery: QueryList<JsonSchemaFormComponent>;
@@ -81,13 +94,6 @@ export class EditableJsonSchemaFormComponent
   public isValid: any;
   private subscriptions: Subscription[] = [];
   public isReady: boolean = false;
-  public currentMethod: {
-    methodName: string;
-    methodId: string;
-    parameters: IJsonSchema;
-    actionName: string;
-    handlebarsMethodSampling?: string;
-  };
   public currentMethodParameters: { [key: string]: any };
 
   public layoutEdit: IJsonLayout;
