@@ -7,6 +7,7 @@
     [innerHTML]="options?.title"
   ></label>
   <textarea
+    *ngIf="!options?.readonly"
     [attr.aria-describedby]="'control' + layoutNode?._id + 'Status'"
     [attr.maxlength]="options?.maxLength"
     [attr.minlength]="options?.minLength"
@@ -23,4 +24,9 @@
     (focusout)="lostFocus($event)"
     >{{ controlValue }}</textarea
   >
+  <pre
+    *ngIf="options?.readonly"
+    class="pre-break"
+    [class]="options?.fieldHtmlClass || ''"
+  ><code>{{controlValue}}</code></pre>
 </div>

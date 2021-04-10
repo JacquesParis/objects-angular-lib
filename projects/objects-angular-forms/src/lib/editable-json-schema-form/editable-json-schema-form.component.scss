@@ -1,19 +1,29 @@
-.schema-readonly::ng-deep .readonly-hidden {
-  display: none;
-}
-::ng-deep {
-  textarea-widget,
-  app-widget-object {
-    & > div > textarea {
-      height: 300px;
-    }
-  }
-  .legend {
+.editable-json-schema-form {
+  .schema-readonly::ng-deep .readonly-hidden {
     display: none;
   }
+  ::ng-deep {
+    .legend {
+      display: none;
+    }
 
-  .form-control-plaintext {
-    border-left: 1px #ccc solid;
-    padding-left: 0.5rem !important;
+    .form-control-plaintext {
+      border-left: 1px #ccc solid;
+      padding-left: 0.5rem !important;
+    }
+    input[type="checkbox"].form-control-plaintext {
+      width: auto;
+      display: inline-block;
+    }
+
+    input[type="checkbox"].form-control-sm {
+      vertical-align: middle;
+      margin-right: 0.5em;
+    }
+    .help-block {
+      font-size: small;
+      color: #666;
+      font-style: italic;
+    }
   }
 }
