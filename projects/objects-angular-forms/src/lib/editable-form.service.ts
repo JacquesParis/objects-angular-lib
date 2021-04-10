@@ -70,25 +70,4 @@ export class EditableFormService implements IWaitingStateService {
       this.waitingStateService.endAction(id);
     }
   }
-
-  public registerWidgetValue(value: any) {
-    const id = 'widget$$' + Math.ceil(Math.random() * 1000000000000000);
-    this.widgetValues[id] = value;
-    return id;
-  }
-  public updateWidgetValues(value: any) {
-    if (_.isArray(value)) {
-      value.forEach((element) => {
-        this.updateWidgetValues(element);
-      });
-    } else if (_.isObject(value)) {
-      for (const key in value) {
-        if (value[key] in this.widgetValues) {
-          value[key] = this.widgetValues[value[key]];
-        } else {
-          this.updateWidgetValues(value[key]);
-        }
-      }
-    }
-  }
 }
