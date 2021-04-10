@@ -22,7 +22,7 @@ import * as _ from 'lodash-es';
 import { QueryList, EventEmitter, OnDestroy } from '@angular/core';
 import { JsonSchemaFormComponent } from 'angular6-json-schema-form';
 import { EditableFormService } from '../editable-form.service';
-import { Subscription } from 'rxjs';
+import { Subscription, BehaviorSubject } from 'rxjs';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
@@ -76,7 +76,7 @@ export class EditableJsonSchemaFormComponent
     icon?: string;
   };
   @ViewChild('libEditableForm') libEditableForm: EditableFormDirective;
-  @ViewChildren('editionFormQuery')
+  @ViewChildren(JsonSchemaFormComponent)
   editionFormQuery: QueryList<JsonSchemaFormComponent>;
 
   @ViewChildren('viewFormQuery', { read: ElementRef })
@@ -91,9 +91,25 @@ export class EditableJsonSchemaFormComponent
   public schemaEdit: IJsonSchema;
   protected _changedValue: any;
   public isInCreation = false;
-  public isValid: boolean;
+  public isValid: boolean = false;
+  private isValidBehavior: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    this.isValid
+  );
+  private setValid(value: boolean) {
+    if (value !== this.isValidBehavior.value) {
+      this.isValidBehavior.next(value);
+    }
+  }
   private subscriptions: Subscription[] = [];
   public isReady: boolean = false;
+  private isReadyBehavior: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    this.isReady
+  );
+  private setReady(value: boolean) {
+    if (value !== this.isReadyBehavior.value) {
+      this.isReadyBehavior.next(value);
+    }
+  }
   public currentMethodParameters: { [key: string]: any };
 
   public layoutEdit: IJsonLayout;
@@ -172,17 +188,29 @@ export class EditableJsonSchemaFormComponent
     });
   }
   async ngOnInit(): Promise<void> {
+    this.subscriptions.push(
+      this.isReadyBehavior
+        .asObservable()
+        .subscribe((value) => (this.isReady = value))
+    );
+    this.subscriptions.push(
+      this.isValidBehavior.asObservable().subscribe((value) =>
+        window.setTimeout(() => {
+          this.isValid = value;
+        })
+      )
+    );
     this.initSchema();
   }
 
   private initSchema() {
-    this.isReady = false;
+    this.setReady(false);
     this.buildSchemaView();
     this.viewProperties = this.editionPropertiesCompleted;
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
     window.setTimeout(() => {
-      this.isReady = true;
+      this.setReady(true);
     });
   }
 
@@ -368,7 +396,7 @@ export class EditableJsonSchemaFormComponent
     }
   }
 
-  get _isValid() {
+  private setValidity() {
     if (
       this.editionFormQuery &&
       this.editionFormQuery.first &&
@@ -378,14 +406,16 @@ export class EditableJsonSchemaFormComponent
       const formGroup: FormGroup = this.editionFormQuery.first.jsf
         .formGroup as FormGroup;
 
-      return _.every(
-        Object.values(formGroup.controls),
-        (control: AbstractControl) => {
-          return !control.errors;
-        }
+      this.setValid(
+        _.every(
+          Object.values(formGroup.controls),
+          (control: AbstractControl) => {
+            return !control.errors;
+          }
+        )
       );
     } else {
-      return false;
+      this.setValid(true);
     }
   }
 
@@ -411,7 +441,7 @@ export class EditableJsonSchemaFormComponent
       });
 
       this.changedValue = properties;
-      this.isValid = this._isValid;
+      this.setValidity();
     }
   }
   public onSubmit(properties) {
