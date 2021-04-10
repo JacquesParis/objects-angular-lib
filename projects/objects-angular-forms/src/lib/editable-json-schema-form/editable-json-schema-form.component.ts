@@ -91,7 +91,7 @@ export class EditableJsonSchemaFormComponent
   public schemaEdit: IJsonSchema;
   protected _changedValue: any;
   public isInCreation = false;
-  public isValid: any;
+  public isValid: boolean;
   private subscriptions: Subscription[] = [];
   public isReady: boolean = false;
   public currentMethodParameters: { [key: string]: any };
@@ -272,7 +272,7 @@ export class EditableJsonSchemaFormComponent
   private _editionPropertiesCompleted(
     value,
     schema,
-    jsonTransfrom: (value: any) => any
+    jsonTransform: (value: any) => any
   ) {
     if (undefined === value || null === value) {
       return value;
@@ -282,7 +282,7 @@ export class EditableJsonSchemaFormComponent
       (schema['x-schema-form'] && 'json' === schema['x-schema-form'].type)
     ) {
       try {
-        return jsonTransfrom(value);
+        return jsonTransform(value);
       } catch (error) {
         return '';
       }
@@ -294,7 +294,7 @@ export class EditableJsonSchemaFormComponent
           value[propertyKey] = this._editionPropertiesCompleted(
             value[propertyKey],
             schema.properties[propertyKey],
-            jsonTransfrom
+            jsonTransform
           );
         }
       }
@@ -303,7 +303,7 @@ export class EditableJsonSchemaFormComponent
         value[index] = this._editionPropertiesCompleted(
           value[index],
           schema.items,
-          jsonTransfrom
+          jsonTransform
         );
       }
     }
