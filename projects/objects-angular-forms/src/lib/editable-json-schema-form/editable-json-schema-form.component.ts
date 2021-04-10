@@ -124,7 +124,7 @@ export class EditableJsonSchemaFormComponent
     this.subscriptions = [];
   }
 
-  protected buildSchemanView() {
+  protected buildSchemaView() {
     if (this.entity.isNewEntity) {
       this.isInCreation = this.entity.isNewEntity;
     }
@@ -177,7 +177,7 @@ export class EditableJsonSchemaFormComponent
 
   private initSchema() {
     this.isReady = false;
-    this.buildSchemanView();
+    this.buildSchemaView();
     this.viewProperties = this.editionPropertiesCompleted;
     this.editionProperties = this.editionPropertiesCompleted;
     this.changedValue = this.editionPropertiesCompleted;
