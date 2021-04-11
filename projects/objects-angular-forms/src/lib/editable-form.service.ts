@@ -1,3 +1,4 @@
+import { WidgetConditionalTextComponent } from './widget-conditional-text/widget-conditional-text.component';
 import { WidgetIconComponent } from './widget-icon/widget-icon.component';
 import { WidgetPositionComponent } from './widget-position/widget-position.component';
 import { WidgetDateRangeComponent } from './widget-date-range/widget-date-range.component';
@@ -57,6 +58,14 @@ export class EditableFormService implements IWaitingStateService {
     widgetLibrary.registerWidget('date-range', WidgetDateRangeComponent);
     widgetLibrary.registerWidget('position', WidgetPositionComponent);
     widgetLibrary.registerWidget('icon', WidgetIconComponent);
+    widgetLibrary.registerWidget(
+      'conditional-text',
+      WidgetConditionalTextComponent
+    );
+    widgetLibrary.registerWidget(
+      'conditional-date-range',
+      WidgetDateRangeComponent
+    );
     //  widgetLibrary.registerWidget('array', WidgetArrayComponent);
     // widgetLibrary.registerWidget('object', WidgetObjectComponent);
   }

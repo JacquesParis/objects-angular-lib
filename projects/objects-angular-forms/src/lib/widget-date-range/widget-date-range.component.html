@@ -1,4 +1,4 @@
-<div [class]="options?.htmlClass || ''">
+<div [class]="options?.htmlClass || ''" [class.isConditional]="isConditional">
   <label
     *ngIf="options?.title"
     [attr.for]="'control' + layoutNode?._id"
@@ -7,7 +7,19 @@
     [innerHTML]="options?.title"
   ></label>
 
-  <div class="row">
+  <div class="form-group form-check mb-0" *ngIf="isConditional">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      [(ngModel)]="displayed"
+      (ngModelChange)="onDisplayChange()"
+      id="check_{{ layoutNode?._id }}"
+    />
+    <label class="form-check-label" for="check_{{ layoutNode?._id }}">{{
+      conditionalValue.title
+    }}</label>
+  </div>
+  <div class="row" [hidden]="!displayed" [class.ml-1]="isConditional">
     <div class="col-12 col-sm-5 col-md-5 col-lg-4 col-xl-3">
       <input
         [id]="'control' + layoutNode?._id"
@@ -32,6 +44,7 @@
     <div
       class="col-12 col-sm-7 col-md-7 col-lg-8 col-xl-9 mt-2 mt-sm-0"
       *ngIf="!options?.readonly"
+      [hidden]="!displayed"
     >
       <button
         class="btn btn-outline-secondary btn-sm"

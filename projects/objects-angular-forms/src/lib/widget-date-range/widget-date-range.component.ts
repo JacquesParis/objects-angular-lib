@@ -33,6 +33,9 @@ export class WidgetDateRangeComponent implements OnInit, AfterViewInit {
   @Input() dataIndex: number[];
   currentValue: string;
   bsRangeValue: { 0: Date; 1: Date } = [undefined, undefined];
+  public conditionalValue: { title: string; defaultValue: string };
+  public isConditional: boolean = false;
+  public displayed: boolean = true;
   constructor(
     private jsf: JsonSchemaFormService,
     private localeService: BsLocaleService
@@ -46,6 +49,12 @@ export class WidgetDateRangeComponent implements OnInit, AfterViewInit {
     }
 
     this.jsf.initializeControl(this);
+
+    if (this.options.conditionalValue) {
+      this.conditionalValue = this.options.conditionalValue;
+      this.displayed = !!this.controlValue;
+      this.isConditional = true;
+    }
   }
 
   ngAfterViewInit() {
@@ -73,6 +82,12 @@ export class WidgetDateRangeComponent implements OnInit, AfterViewInit {
     if (this.currentValue !== newValue) {
       this.currentValue = newValue;
       this.jsf.updateValue(this, this.currentValue);
+    }
+  }
+
+  public onDisplayChange(): void {
+    if (!this.displayed) {
+      this.updateValue({ 0: undefined, 1: undefined });
     }
   }
 }

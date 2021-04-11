@@ -1,0 +1,53 @@
+<div [class]="options?.htmlClass || ''">
+  <div class="form-group form-check mb-0">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      [(ngModel)]="displayed"
+      (ngModelChange)="onDisplayChange()"
+      id="check_{{ layoutNode?._id }}"
+    />
+    <label class="form-check-label" for="check_{{ layoutNode?._id }}">{{
+      conditionalValue.title
+    }}</label>
+  </div>
+  <label
+    *ngIf="options?.title"
+    [attr.for]="'control' + layoutNode?._id"
+    [class]="options?.labelHtmlClass || ''"
+    [style.display]="options?.notitle ? 'none' : ''"
+    [innerHTML]="options?.title"
+  ></label>
+  <div class="input-group" [hidden]="!displayed">
+    <div class="input-group-prepend" [hidden]="true">
+      <label class="pr-1 pl-4 pt-1 mb-0">{{ title }}:</label>
+    </div>
+    <input
+      class="ml-3"
+      [attr.aria-describedby]="'control' + layoutNode?._id + 'Status'"
+      [attr.list]="'control' + layoutNode?._id + 'Autocomplete'"
+      [attr.maxlength]="options?.maxLength"
+      [attr.minlength]="options?.minLength"
+      [attr.pattern]="options?.pattern"
+      [attr.placeholder]="options?.placeholder"
+      [attr.required]="options?.required"
+      [class]="options?.fieldHtmlClass || ''"
+      [disabled]="controlDisabled"
+      [id]="'control' + layoutNode?._id"
+      [name]="controlName"
+      [readonly]="options?.readonly ? 'readonly' : null"
+      [type]="layoutNode?.type"
+      [value]="controlValue"
+      (input)="updateValue($event)"
+    />
+    <datalist
+      *ngIf="options?.typeahead?.source"
+      [id]="'control' + layoutNode?._id + 'Autocomplete'"
+    >
+      <option
+        *ngFor="let word of options?.typeahead?.source"
+        [value]="word"
+      ></option>
+    </datalist>
+  </div>
+</div>

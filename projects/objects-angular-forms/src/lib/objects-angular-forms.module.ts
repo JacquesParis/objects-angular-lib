@@ -1,3 +1,4 @@
+import { WidgetConditionalTextComponent } from './widget-conditional-text/widget-conditional-text.component';
 import { WidgetIconComponent } from './widget-icon/widget-icon.component';
 import { WidgetPositionComponent } from './widget-position/widget-position.component';
 import { WidgetDateRangeComponent } from './widget-date-range/widget-date-range.component';
@@ -40,6 +41,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     WidgetDateRangeComponent,
     WidgetPositionComponent,
     WidgetIconComponent,
+    WidgetConditionalTextComponent,
   ],
   imports: [
     CommonModule,
@@ -66,6 +68,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     WidgetDateRangeComponent,
     WidgetPositionComponent,
     WidgetIconComponent,
+    WidgetConditionalTextComponent,
   ],
   entryComponents: [EditableJsonSchemaFormComponent],
 })

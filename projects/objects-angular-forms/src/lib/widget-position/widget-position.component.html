@@ -11,7 +11,7 @@
     <div
       class="ml-md-3 col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6 pr-0"
       style="font-size: small"
-      *ngIf="marker"
+      *ngIf="!hideMap"
     >
       {{ currentValue }}
       <i-bs
@@ -30,13 +30,13 @@
     <div
       class="ml-md-3 col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6"
       [style.height]="'200px'"
-      [hidden]="hideMap"
+      [hidden]="hideMap && initDone"
       [id]="'control' + layoutNode?._id"
     ></div>
     <div
       class="ml-md-3 col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6"
       style="font-size: small"
-      *ngIf="!marker"
+      *ngIf="hideMap"
     >
       No position defined
       <i-bs

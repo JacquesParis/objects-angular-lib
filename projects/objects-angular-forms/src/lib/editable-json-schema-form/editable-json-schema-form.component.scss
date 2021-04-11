@@ -25,5 +25,11 @@
       color: #666;
       font-style: italic;
     }
+    .schema-form-conditional-text,
+    .schema-form-conditional-date-range {
+      & > label {
+        display: none;
+      }
+    }
   }
 }

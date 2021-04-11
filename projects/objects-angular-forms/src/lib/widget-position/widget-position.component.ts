@@ -7,6 +7,7 @@ import {
   Input,
   AfterViewInit,
   TemplateRef,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import {
@@ -52,15 +53,22 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
   markerEdit: Marker<any>;
   hideMap = false;
   hasGeoloc = false;
+  initDone: boolean = false;
   constructor(
     private jsf: JsonSchemaFormService,
     private localeService: BsLocaleService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.options = this.layoutNode.options || {};
     this.jsf.initializeControl(this);
+    this.currentValue = this.controlValue ? this.controlValue : '';
+    const values = this.currentValue.split(',');
+    if (values.length < 2 || '' === values[0] || '' === values[1]) {
+      this.hideMap = true;
+    }
     if (navigator?.geolocation?.getCurrentPosition) {
       navigator.geolocation.getCurrentPosition((position: any) => {
         this.hasGeoloc = true;
@@ -73,6 +81,7 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
   locate() {
     navigator.geolocation.getCurrentPosition((position: any) => {
       this.mapEdit.setView([
@@ -101,7 +110,6 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
 
     this.map.addLayer(this.osmLayer);
 
-    this.currentValue = this.controlValue ? this.controlValue : '';
     const values = this.currentValue.split(',');
     while (2 > values.length) {
       values.push('');
@@ -117,6 +125,8 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
     } else {
       this.hideMap = true;
     }
+    this.initDone = true;
+    this.changeDetectorRef.detectChanges();
   }
 
   openModal(template: TemplateRef<any>) {
