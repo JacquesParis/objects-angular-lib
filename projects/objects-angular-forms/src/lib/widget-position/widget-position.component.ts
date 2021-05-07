@@ -1,3 +1,8 @@
+import { cloneDeep } from 'lodash-es';
+import {
+  EditableFormService,
+  IGeolocationPosition,
+} from './../editable-form.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AbstractControl } from '@angular/forms';
 import { JsonSchemaFormService } from 'angular6-json-schema-form';
@@ -18,7 +23,6 @@ import {
   marker,
   TileLayer,
   tileLayer,
-  LocationEvent,
   divIcon,
   DivIcon,
 } from 'leaflet';
@@ -32,6 +36,7 @@ const NO_POSITION: [number, number] = [50.6311634, 3.0599573];
 })
 export class WidgetPositionComponent implements OnInit, AfterViewInit {
   static lastPosition: [number, number] = undefined;
+  public isCollapsed = true;
   modalRef: BsModalRef;
   formControl: AbstractControl;
   controlName: string;
@@ -54,11 +59,16 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
   hideMap = false;
   hasGeoloc = false;
   initDone: boolean = false;
+  private savedLatLng: LatLng;
+  public address: string;
+  public addressError: string;
+
   constructor(
     private jsf: JsonSchemaFormService,
     private localeService: BsLocaleService,
     private modalService: BsModalService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    public editableFormService: EditableFormService
   ) {}
 
   ngOnInit() {
@@ -89,6 +99,21 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
         position.coords.longitude,
       ]);
     });
+  }
+
+  async search() {
+    this.addressError = null;
+    try {
+      if (this.address) {
+        const position: IGeolocationPosition = await this.editableFormService.geocode(
+          this.address
+        );
+        this.mapEdit.setView([position.latitude, position.longitude]);
+        this.isCollapsed = true;
+      }
+    } catch (error) {
+      this.addressError = error.message;
+    }
   }
   ngAfterViewInit() {
     this.map = map('control' + this.layoutNode?._id).setView(
@@ -129,7 +154,13 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  cancel() {
+    this.updateValue(this.savedLatLng);
+    this.modalRef.hide();
+  }
+
   openModal(template: TemplateRef<any>) {
+    this.savedLatLng = this.latLng ? cloneDeep(this.latLng) : undefined;
     this.modalRef = this.modalService.show(template);
 
     window.setTimeout(() => {

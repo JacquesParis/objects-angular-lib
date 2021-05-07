@@ -9,12 +9,17 @@ import { WidgetImagesComponent } from './widget-images/widget-images.component';
 import { WidgetImageComponent } from './widget-image/widget-image.component';
 import { WidgetFileComponent } from './widget-file/widget-file.component';
 import { Injectable } from '@angular/core';
-import {
-  CheckboxesComponent,
-  WidgetLibraryService,
-} from 'angular6-json-schema-form';
+import { WidgetLibraryService } from 'angular6-json-schema-form';
 import * as _ from 'lodash-es';
 
+export interface IGeolocationPosition {
+  latitude: number;
+  longitude: number;
+}
+export interface IGeolocationService {
+  hasGeocodeMethod(): boolean;
+  geocode(address: string): Promise<IGeolocationPosition>;
+}
 export interface IWaitingStateService {
   initAction(id: string): void;
   endAction(id: string): void;
@@ -22,8 +27,10 @@ export interface IWaitingStateService {
 @Injectable({
   providedIn: 'root',
 })
-export class EditableFormService implements IWaitingStateService {
+export class EditableFormService
+  implements IWaitingStateService, IGeolocationService {
   private waitingStateService: IWaitingStateService;
+  private geolocationService: IGeolocationService;
   // tslint:disable-next-line: variable-name
   protected _runningEditionForm: string = undefined;
   widgetValues: { [id: string]: any } = {};
@@ -35,6 +42,9 @@ export class EditableFormService implements IWaitingStateService {
     waitingStateService: IWaitingStateService
   ) {
     this.waitingStateService = waitingStateService;
+  }
+  public registerGeolocationService(geolocationService: IGeolocationService) {
+    this.geolocationService = geolocationService;
   }
 
   public registerFormInEdition(formId: string) {
@@ -68,6 +78,17 @@ export class EditableFormService implements IWaitingStateService {
     );
     //  widgetLibrary.registerWidget('array', WidgetArrayComponent);
     // widgetLibrary.registerWidget('object', WidgetObjectComponent);
+  }
+  hasGeocodeMethod(): boolean {
+    return (
+      this.geolocationService && this.geolocationService.hasGeocodeMethod()
+    );
+  }
+  geocode(address: string): Promise<IGeolocationPosition> {
+    if (!this.hasGeocodeMethod()) {
+      throw new Error('Method not implemented.');
+    }
+    return this.geolocationService.geocode(address);
   }
   initAction(id: string): void {
     if (this.waitingStateService) {

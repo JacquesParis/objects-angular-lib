@@ -22,6 +22,7 @@ import { WidgetFileComponent } from './widget-file/widget-file.component';
 import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
 // RECOMMENDED
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     ReactiveFormsModule,
     NgxBootstrapIconsModule,
     BsDatepickerModule,
+    CollapseModule,
   ],
   exports: [
     EditableInputComponent,

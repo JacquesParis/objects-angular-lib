@@ -51,17 +51,68 @@
 
 <ng-template #template>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">Center on position</h4>
-    <div class="pull-right">
-      <i
-        class="align-middle mr-3 fas fa-crosshairs fa-2x"
-        (click)="locate()"
-        *ngIf="hasGeoloc"
-      ></i>
-      <i class="align-middle fas fa-check fa-2x" (click)="modalRef.hide()"></i>
-    </div>
+    <h5 class="modal-title pull-left">Center on position</h5>
+    <ul class="nav justify-content-end">
+      <li class="nav-item">
+        <a
+          class="nav-link p-0 mr-2 text-info"
+          *ngIf="editableFormService.hasGeocodeMethod()"
+          (click)="isCollapsed = !isCollapsed"
+          [attr.aria-expanded]="!isCollapsed"
+          [attr.aria-controls]="'collapse_search_' + layoutNode?._id"
+          ><i class="align-middle mr-1 fas fa-search-location fa-2x"></i
+        ></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link p-0 mr-2 text-info" (click)="locate()"
+          ><i
+            class="align-middle mr-1 fas fa-crosshairs fa-2x"
+            *ngIf="hasGeoloc"
+          ></i
+        ></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link p-0 mr-2 text-danger" (click)="cancel()"
+          ><i class="align-middle mr-1 fas fa-times fa-2x"></i
+        ></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link p-0 text-success" (click)="modalRef.hide()">
+          <i class="align-middle fas fa-check fa-2x"></i
+        ></a>
+      </li>
+    </ul>
   </div>
-  <div class="modal-body modalMap" [id]="'edit' + layoutNode?._id">
-    This is a modal.
+
+  <div class="modal-body modalMap">
+    <div [id]="'edit' + layoutNode?._id" class="modalMapIn"></div>
+    <div
+      class="mapSearch"
+      [id]="'#collapse_search_' + layoutNode?._id"
+      [collapse]="isCollapsed"
+      [isAnimated]="true"
+      *ngIf="editableFormService.hasGeocodeMethod()"
+    >
+      <div class="card card-body">
+        <div *ngIf="addressError" class="alert alert-danger" role="alert">
+          Unknown address
+        </div>
+        <form>
+          <div class="form-group">
+            <label for="address">Address</label>
+            <textarea
+              (ngModelChange)="addressError = null"
+              class="form-control"
+              [(ngModel)]="address"
+              name="address"
+              rows="3"
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" (click)="search()">
+            Search
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </ng-template>

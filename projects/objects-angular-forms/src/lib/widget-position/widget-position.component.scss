@@ -1,8 +1,29 @@
 .modalMap {
   height: calc(100vh - 5.5rem);
+  position: relative;
+  .modalMapIn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+  .mapSearch {
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
+.fa-2x {
+  font-size: 1.5em;
 }
 @media (min-width: 576px) {
   .modalMap {
     height: calc(100vh - 8rem);
+  }
+  .fa-2x {
+    font-size: 2em;
   }
 }
