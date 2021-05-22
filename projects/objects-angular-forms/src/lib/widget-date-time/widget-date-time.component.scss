@@ -1,0 +1,20 @@
+.widget-date-time::ng-deep {
+  .form-timepicker {
+    .form-group {
+      margin: 0;
+      padding: 0;
+      .form-control {
+        margin: 0;
+        padding: 0;
+      }
+    }
+    &.form-control-plaintext {
+      tr.text-center {
+        display: none;
+      }
+      .bs-timepicker-field {
+        width: 25px;
+      }
+    }
+  }
+}

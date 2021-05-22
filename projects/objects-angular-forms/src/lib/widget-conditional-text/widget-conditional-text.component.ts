@@ -12,7 +12,8 @@ import { set } from 'lodash-es';
 })
 export class WidgetConditionalTextComponent
   extends InputComponent
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy
+{
   public displayed: boolean = false;
   conditionalValue: {
     title: string;
@@ -31,7 +32,9 @@ export class WidgetConditionalTextComponent
     this.conditionalValue = this.options.conditionalValue;
     this.displayed = !!this.controlValue;
 
-    this.default = new Function('model', this.conditionalValue.defaultValue);
+    if (this.conditionalValue.defaultValue) {
+      this.default = new Function('model', this.conditionalValue.defaultValue);
+    }
     this.title = this.jsonSchemaFormService.layout.find(
       (l) => l._id === this.layoutNode._id
     ).options.title;
@@ -42,7 +45,9 @@ export class WidgetConditionalTextComponent
   }
   public onDisplayChange(): void {
     if (this.displayed) {
-      const value: string = this.default(this.jsonSchemaFormService.data);
+      const value: string = this.default
+        ? this.default(this.jsonSchemaFormService.data)
+        : 'Enter value';
       this.updateValue({ target: { value: value } });
     } else {
       this.updateValue({ target: { value: '' } });

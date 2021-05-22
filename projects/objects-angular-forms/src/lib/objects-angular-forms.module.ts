@@ -1,3 +1,4 @@
+import { WidgetDateTimeComponent } from './widget-date-time/widget-date-time.component';
 import { WidgetConditionalTextComponent } from './widget-conditional-text/widget-conditional-text.component';
 import { WidgetIconComponent } from './widget-icon/widget-icon.component';
 import { WidgetPositionComponent } from './widget-position/widget-position.component';
@@ -23,6 +24,7 @@ import { NgxBootstrapIconsModule } from 'ngx-bootstrap-icons';
 // RECOMMENDED
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
     WidgetPositionComponent,
     WidgetIconComponent,
     WidgetConditionalTextComponent,
+    WidgetDateTimeComponent,
   ],
   imports: [
     CommonModule,
@@ -51,6 +54,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
     ReactiveFormsModule,
     NgxBootstrapIconsModule,
     BsDatepickerModule,
+    TimepickerModule,
     CollapseModule,
   ],
   exports: [
@@ -71,6 +75,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
     WidgetPositionComponent,
     WidgetIconComponent,
     WidgetConditionalTextComponent,
+    WidgetDateTimeComponent,
   ],
   entryComponents: [EditableJsonSchemaFormComponent],
 })

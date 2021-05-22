@@ -1,0 +1,70 @@
+<div
+  class="widget-date-time"
+  [class]="options?.htmlClass || ''"
+  [class.isConditional]="isConditional"
+>
+  <label
+    *ngIf="options?.title"
+    [attr.for]="'control' + layoutNode?._id"
+    [class]="options?.labelHtmlClass || ''"
+    [style.display]="options?.notitle ? 'none' : ''"
+    [innerHTML]="options?.title"
+  ></label>
+
+  <div class="form-group form-check mb-0" *ngIf="isConditional">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      [(ngModel)]="displayed"
+      (ngModelChange)="onDisplayChange()"
+      id="check_{{ layoutNode?._id }}"
+    />
+    <label class="form-check-label" for="check_{{ layoutNode?._id }}">{{
+      conditionalValue.title
+    }}</label>
+  </div>
+  <div
+    class="row align-items-center"
+    *ngIf="displayed"
+    [class.ml-1]="isConditional"
+  >
+    <div [class]="datePickerClass">
+      <input
+        [id]="'control_date' + layoutNode?._id"
+        [attr.aria-describedby]="'control_date' + layoutNode?._id + 'Status'"
+        [attr.list]="'control_date' + layoutNode?._id + 'Autocomplete'"
+        [name]="'control_date' + layoutNode?._id + controlName"
+        class="form-control"
+        [class]="options?.fieldHtmlClass || ''"
+        [disabled]="controlDisabled"
+        bsDatepicker
+        [(ngModel)]="datepickerModel"
+        (ngModelChange)="updateValue($event)"
+        [readOnly]="options?.readonly"
+        [attr.placeholder]="options?.placeholder"
+        [attr.required]="options?.required"
+        [bsConfig]="{
+          containerClass: 'theme-default'
+        }"
+      />
+    </div>
+    <div [class]="timePickerClass">
+      <timepicker
+        [(ngModel)]="mytime"
+        [id]="'control_time' + layoutNode?._id"
+        [attr.aria-describedby]="'control_time' + layoutNode?._id + 'Status'"
+        [attr.list]="'control_time' + layoutNode?._id + 'Autocomplete'"
+        [name]="'control_time' + layoutNode?._id + controlName"
+        class="form-control form-timepicker h-auto border-0"
+        [showSeconds]="true"
+        [showMeridian]="false"
+        [class]="options?.fieldHtmlClass || ''"
+        [disabled]="controlDisabled"
+        (ngModelChange)="updateValue($event)"
+        [readonlyInput]="options?.readonly"
+        [attr.placeholder]="options?.placeholder"
+        [attr.required]="options?.required"
+      ></timepicker>
+    </div>
+  </div>
+</div>

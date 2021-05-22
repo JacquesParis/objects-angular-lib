@@ -1,3 +1,4 @@
+import { WidgetDateTimeComponent } from './widget-date-time/widget-date-time.component';
 import { WidgetConditionalTextComponent } from './widget-conditional-text/widget-conditional-text.component';
 import { WidgetIconComponent } from './widget-icon/widget-icon.component';
 import { WidgetPositionComponent } from './widget-position/widget-position.component';
@@ -28,7 +29,8 @@ export interface IWaitingStateService {
   providedIn: 'root',
 })
 export class EditableFormService
-  implements IWaitingStateService, IGeolocationService {
+  implements IWaitingStateService, IGeolocationService
+{
   private waitingStateService: IWaitingStateService;
   private geolocationService: IGeolocationService;
   // tslint:disable-next-line: variable-name
@@ -66,6 +68,7 @@ export class EditableFormService
     widgetLibrary.registerWidget('checkboxes', WidgetCheckboxesComponent);
     widgetLibrary.registerWidget('textarea', WidgetTextareaComponent);
     widgetLibrary.registerWidget('date-range', WidgetDateRangeComponent);
+    widgetLibrary.registerWidget('date-time', WidgetDateTimeComponent);
     widgetLibrary.registerWidget('position', WidgetPositionComponent);
     widgetLibrary.registerWidget('icon', WidgetIconComponent);
     widgetLibrary.registerWidget(

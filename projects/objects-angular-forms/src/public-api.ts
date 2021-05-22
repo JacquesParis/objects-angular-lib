@@ -23,3 +23,4 @@ export * from './lib/widget-date-range/widget-date-range.component';
 export * from './lib/widget-position/widget-position.component';
 export * from './lib/widget-icon/widget-icon.component';
 export * from './lib/widget-conditional-text/widget-conditional-text.component';
+export * from './lib/widget-date-time/widget-date-time.component';

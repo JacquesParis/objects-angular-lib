@@ -6,8 +6,20 @@
     [style.display]="options?.notitle ? 'none' : ''"
     [innerHTML]="options?.title"
   ></label>
+  <div class="form-group form-check mb-0" *ngIf="isConditional">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      [(ngModel)]="displayed"
+      (ngModelChange)="onDisplayChange()"
+      id="check_{{ layoutNode?._id }}"
+    />
+    <label class="form-check-label" for="check_{{ layoutNode?._id }}">{{
+      conditionalValue.title
+    }}</label>
+  </div>
 
-  <div class="row">
+  <div class="row" [hidden]="!displayed" [class.ml-1]="isConditional">
     <div
       class="ml-md-3 col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6 pr-0"
       style="font-size: small"
@@ -28,13 +40,15 @@
       ></i-bs>
     </div>
     <div
-      class="ml-md-3 col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6"
+      [class.ml-md-3]="!isConditional"
+      class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6"
       [style.height]="'200px'"
       [hidden]="hideMap && initDone"
       [id]="'control' + layoutNode?._id"
     ></div>
     <div
-      class="ml-md-3 col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6"
+      [class.ml-md-3]="!isConditional"
+      class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6"
       style="font-size: small"
       *ngIf="hideMap"
     >

@@ -62,9 +62,13 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
   private savedLatLng: LatLng;
   public address: string;
   public addressError: string;
+  public conditionalValue: { title: string; defaultValue: string };
+  public isConditional: boolean = false;
+  public displayed: boolean = true;
+  default: Function;
 
   constructor(
-    private jsf: JsonSchemaFormService,
+    private jsonSchemaFormService: JsonSchemaFormService,
     private localeService: BsLocaleService,
     private modalService: BsModalService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -73,7 +77,7 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.options = this.layoutNode.options || {};
-    this.jsf.initializeControl(this);
+    this.jsonSchemaFormService.initializeControl(this);
     this.currentValue = this.controlValue ? this.controlValue : '';
     const values = this.currentValue.split(',');
     if (values.length < 2 || '' === values[0] || '' === values[1]) {
@@ -90,6 +94,17 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
         }
       });
     }
+    if (this.options.conditionalValue) {
+      this.conditionalValue = this.options.conditionalValue;
+      this.displayed = !!this.controlValue;
+      this.isConditional = true;
+      if (this.conditionalValue.defaultValue) {
+        this.default = new Function(
+          'model',
+          this.conditionalValue.defaultValue
+        );
+      }
+    }
   }
 
   locate() {
@@ -105,9 +120,8 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
     this.addressError = null;
     try {
       if (this.address) {
-        const position: IGeolocationPosition = await this.editableFormService.geocode(
-          this.address
-        );
+        const position: IGeolocationPosition =
+          await this.editableFormService.geocode(this.address);
         this.mapEdit.setView([position.latitude, position.longitude]);
         this.isCollapsed = true;
       }
@@ -115,11 +129,18 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
       this.addressError = error.message;
     }
   }
+
+  private getDefaultPosition(): [number, number] {
+    return this.default
+      ? this.default(this.jsonSchemaFormService.data).split(',')
+      : WidgetPositionComponent.lastPosition
+      ? WidgetPositionComponent.lastPosition
+      : NO_POSITION;
+  }
+
   ngAfterViewInit() {
     this.map = map('control' + this.layoutNode?._id).setView(
-      WidgetPositionComponent.lastPosition
-        ? WidgetPositionComponent.lastPosition
-        : NO_POSITION,
+      this.getDefaultPosition(),
       16
     );
     this.icon = divIcon({
@@ -165,11 +186,7 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
 
     window.setTimeout(() => {
       this.mapEdit = map('edit' + this.layoutNode?._id).setView(
-        this.latLng
-          ? this.latLng
-          : WidgetPositionComponent.lastPosition
-          ? WidgetPositionComponent.lastPosition
-          : NO_POSITION,
+        this.latLng ? this.latLng : this.getDefaultPosition(),
         16
       );
       this.mapEdit.addLayer(
@@ -232,7 +249,18 @@ export class WidgetPositionComponent implements OnInit, AfterViewInit {
     if (this.currentValue !== newValue) {
       this.currentValue = newValue;
       this.hideMap = !this.currentValue;
-      this.jsf.updateValue(this, this.currentValue);
+      this.jsonSchemaFormService.updateValue(this, this.currentValue);
+    }
+  }
+  public onDisplayChange(): void {
+    if (!this.displayed) {
+      this.updateValue(undefined);
+    } else if (!this.currentValue) {
+      const position = this.getDefaultPosition();
+      this.updateValue(new LatLng(position[0], position[1]));
+      window.setTimeout(() => {
+        this.map.invalidateSize();
+      });
     }
   }
 }
