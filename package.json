@@ -53,7 +53,7 @@
     "leaflet": "^1.7.1",
     "lodash-es": "^4.17.15",
     "moment": "^2.29.1",
-    "ng-packagr": "^9.0.0",
+    "ng-packagr": "^10.1.1",
     "ngx-bootstrap": "^6.1.0",
     "ngx-bootstrap-icons": "^1.2.1",
     "protractor": "~5.4.3",
